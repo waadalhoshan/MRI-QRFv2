@@ -1,0 +1,20 @@
+# Copy to config/paths.local.yaml and edit locally.
+# Do not commit paths.local.yaml if it exposes private storage paths.
+
+oasis1:
+  raw_root: "D:/OASIS_1/raw"
+  metadata: "D:/OASIS_1/metadata/oasis_cross-sectional.xlsx"
+  organized: "D:/OASIS_1/organized"
+  split: "D:/OASIS_1/split"
+  clean_128: "D:/OASIS_1/clean_128"
+  distortions_128: "D:/OASIS_1/distortions_128"
+
+oasis2:
+  raw_root: "D:/OASIS_2/raw"
+  metadata: "D:/OASIS_2/metadata/oasis_longitudinal_demographics.xlsx"
+  organized: "D:/OASIS_2/organized"
+  split: "D:/OASIS_2/split"
+  clean_128: "D:/OASIS_2/clean_128"
+  distortions_128: "D:/OASIS_2/distortions_128"
+
+results_root: "D:/MRI_QRF_results"

@@ -1,0 +1,133 @@
+MRI-QRF-replication/
+├── config
+│   ├── .gitkeep
+│   ├── paths.example.yaml
+│   └── study_protocol.yaml
+├── data
+│   ├── clean_128
+│   │   └── .gitkeep
+│   ├── clean_32
+│   │   └── .gitkeep
+│   ├── clean_64
+│   │   └── .gitkeep
+│   ├── distortions_128
+│   │   └── .gitkeep
+│   ├── distortions_32
+│   │   └── .gitkeep
+│   ├── distortions_64
+│   │   └── .gitkeep
+│   ├── manifests
+│   │   ├── .gitkeep
+│   │   └── README.md
+│   ├── organized
+│   │   └── .gitkeep
+│   ├── raw
+│   │   └── .gitkeep
+│   ├── split
+│   │   └── .gitkeep
+│   └── README.md
+├── docs
+│   ├── model_cards
+│   │   ├── .gitkeep
+│   │   ├── LinearSVM.md
+│   │   ├── RandomForest.md
+│   │   ├── ResNet18.md
+│   │   └── SimpleCNN.md
+│   ├── 01_data_access.md
+│   ├── 02_cohort_and_splits.md
+│   ├── 03_preprocessing.md
+│   ├── 04_distortion_pipeline.md
+│   ├── 05_model_training.md
+│   ├── 06_statistics.md
+│   ├── 07_reader_study.md
+│   ├── 08_results_and_models_upload.md
+│   ├── 09_reproduction_checklist.md
+│   └── 10_output_files.md
+├── models
+│   ├── classical
+│   │   ├── ML_128
+│   │   │   └── .gitkeep
+│   │   ├── ML_32
+│   │   │   └── .gitkeep
+│   │   └── ML_64
+│   │       └── .gitkeep
+│   ├── deep
+│   │   └── DL_128
+│   │       └── .gitkeep
+│   └── README.md
+├── references
+│   ├── .gitkeep
+│   └── oasis.bib
+├── requirements
+│   ├── .gitkeep
+│   ├── environment.yml
+│   ├── R_packages.txt
+│   ├── requirements_analysis.txt
+│   ├── requirements_dl.txt
+│   ├── requirements_ml.txt
+│   └── requirements_preprocessing.txt
+├── results
+│   ├── classical
+│   │   ├── ML_128
+│   │   │   └── .gitkeep
+│   │   ├── ML_32
+│   │   │   └── .gitkeep
+│   │   ├── ML_64
+│   │   │   └── .gitkeep
+│   │   └── subject_level_analysis
+│   │       └── .gitkeep
+│   ├── deep
+│   │   └── DL_128
+│   │       └── .gitkeep
+│   ├── figures
+│   │   └── .gitkeep
+│   ├── reader_study
+│   │   └── .gitkeep
+│   ├── statistics
+│   │   └── .gitkeep
+│   └── README.md
+├── scripts
+│   ├── data_preparation
+│   │   ├── .gitkeep
+│   │   ├── derive_resolutions.py
+│   │   ├── organize_oasis1.py
+│   │   ├── organize_oasis2.py
+│   │   ├── preprocess_to_128.py
+│   │   ├── split_subjects.py
+│   │   └── validate_prepared_data.py
+│   ├── distortions
+│   │   ├── .gitkeep
+│   │   └── generate_distortions.py
+│   ├── modeling
+│   │   ├── .gitkeep
+│   │   ├── README.md
+│   │   ├── run_dl_all.sh
+│   │   ├── run_dl_models_mri_qrf.py
+│   │   ├── run_ml_models_mri_qrf.py
+│   │   ├── start_dl_tmux.sh
+│   │   ├── subject_level_analysis_mri_qrf.py
+│   │   └── validate_dl_data.sh
+│   ├── reader_study
+│   │   ├── google_apps_script
+│   │   │   ├── .gitkeep
+│   │   │   ├── Code.gs
+│   │   │   ├── index.html
+│   │   │   └── README.md
+│   │   └── prepare_rater_study.py
+│   ├── reporting
+│   │   ├── .gitkeep
+│   │   ├── build_resolution_heatmaps.py
+│   │   └── generate_checksums.py
+│   └── statistics
+│       ├── .gitkeep
+│       ├── mixed_effects_logistic.R
+│       ├── patient_cluster_bootstrap.py
+│       └── prepare_glmm_input.py
+├── .gitattributes
+├── .gitignore
+├── CHECKSUMS.sha256
+├── CITATION.cff
+├── FILE_INVENTORY.csv
+├── LICENSE
+├── README.md
+└── RUN_ORDER.md

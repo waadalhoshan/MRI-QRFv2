@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <base target="_top">
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <title>
+    MRI Readability Assessment
+  </title>
+
+  <style>
+    :root {
+      --bg:#f4f5f7;
+      --card:#ffffff;
+      --text:#1a1d23;
+      --muted:#6b7280;
+
+      --accent:#2563eb;
+      --accent-hover:#1d4ed8;
+
+      --green:#16a34a;
+      --green-soft:#f0fdf4;
+
+      --amber:#d97706;
+      --amber-soft:#fffbeb;
+
+      --red:#dc2626;
+      --red-soft:#fef2f2;
+
+      --border:#e5e7eb;
+
+      --shadow:
+        0 1px 3px rgba(0,0,0,.06),
+        0 8px 24px rgba(0,0,0,.04);
+    }
+
+
+    * {
+      box-sizing:border-box;
+    }
+
+
+    html,
+    body {
+      min-height:100%;
+      margin:0;
+    }
+
+
+    body {
+      background:var(--bg);
+      color:var(--text);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+    }
+
+
+    .topbar {
+      position:sticky;
+      top:0;
+      z-index:10;
+
+      background:var(--card);
+
+      border-bottom:
+        1px solid
+        var(--border);
+
+      padding:
+        14px 20px;
+
+      display:flex;
+
+      justify-content:
+        space-between;
+
+      align-items:center;
+    }
+
+
+    .brand {
+      font-weight:700;
+      font-size:1rem;
+
+      display:flex;
+
+      align-items:center;
+
+      gap:8px;
+    }
+
+
+    .dot {
+      width:8px;
+      height:8px;
+
+      border-radius:50%;
+
+      background:
+        var(--accent);
+    }
+
+
+    .meta {
+      font-size:.82rem;
+      color:var(--muted);
+    }
+
+
+    .page {
+      display:flex;
+
+      flex-direction:column;
+
+      align-items:center;
+
+      padding:
+        24px 16px 48px;
+    }
+
+
+    .wrap {
+      width:100%;
+      max-width:560px;
+    }
+
+
+    h1 {
+      font-size:1.2rem;
+      margin:4px 0 2px;
+    }
+
+
+    h2 {
+      font-size:1rem;
+      margin:20px 0 6px;
+    }
+
+
+    .sub {
+      color:var(--muted);
+
+      font-size:.88rem;
+
+      margin-bottom:20px;
+    }
+
+
+    .card {
+      background:var(--card);
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:18px;
+
+      box-shadow:
+        var(--shadow);
+
+      padding:24px;
+
+      margin-bottom:16px;
+    }
+
+
+    p,
+    li {
+      line-height:1.55;
+      font-size:.94rem;
+    }
+
+
+    ul {
+      padding-left:20px;
+    }
+
+
+    .progress-row {
+      display:flex;
+
+      justify-content:
+        space-between;
+
+      align-items:center;
+
+      margin-bottom:8px;
+
+      font-size:.82rem;
+
+      color:var(--muted);
+    }
+
+
+    .progress-bar {
+      height:6px;
+
+      background:
+        var(--border);
+
+      border-radius:4px;
+
+      overflow:hidden;
+
+      margin-bottom:20px;
+    }
+
+
+    .progress-fill {
+      height:100%;
+
+      background:
+        var(--accent);
+
+      transition:
+        width .25s ease;
+    }
+
+
+    .rating-card {
+      display:flex;
+
+      flex-direction:column;
+
+      gap:20px;
+    }
+
+
+    .imgbox {
+      width:100%;
+
+      aspect-ratio:1/1;
+
+      background:#0a0a0c;
+
+      border-radius:14px;
+
+      overflow:hidden;
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:center;
+    }
+
+
+    .imgbox img {
+      width:100%;
+      height:100%;
+
+      object-fit:contain;
+    }
+
+
+    .question-panel {
+      display:flex;
+
+      flex-direction:column;
+    }
+
+
+    .question {
+      text-align:center;
+
+      font-size:1.1rem;
+
+      font-weight:700;
+
+      margin-bottom:18px;
+    }
+
+
+    .resume-box {
+      background:#eff6ff;
+
+      border:
+        1px solid
+        #bfdbfe;
+
+      border-radius:12px;
+
+      padding:12px;
+
+      margin-bottom:16px;
+
+      color:#1e40af;
+
+      font-size:.88rem;
+    }
+
+
+    .btnrow {
+      display:flex;
+
+      flex-direction:column;
+
+      gap:12px;
+    }
+
+
+    .ratebtn {
+      padding:
+        16px 18px;
+
+      border-radius:14px;
+
+      border:
+        2px solid
+        var(--border);
+
+      background:
+        var(--card);
+
+      color:
+        var(--text);
+
+      font-size:
+        1.02rem;
+
+      font-weight:600;
+
+      cursor:pointer;
+
+      display:flex;
+
+      justify-content:
+        space-between;
+
+      align-items:center;
+    }
+
+
+    .ratebtn:disabled {
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+
+    .ratebtn.readable {
+      border-color:
+        var(--green);
+    }
+
+
+    .ratebtn.readable:hover:not(:disabled) {
+      background:
+        var(--green-soft);
+    }
+
+
+    .ratebtn.borderline {
+      border-color:
+        var(--amber);
+    }
+
+
+    .ratebtn.borderline:hover:not(:disabled) {
+      background:
+        var(--amber-soft);
+    }
+
+
+    .ratebtn.unreadable {
+      border-color:
+        var(--red);
+    }
+
+
+    .ratebtn.unreadable:hover:not(:disabled) {
+      background:
+        var(--red-soft);
+    }
+
+
+    .ratebtn .key {
+      font-size:.75rem;
+
+      color:
+        var(--muted);
+
+      font-weight:400;
+
+      border:
+        1px solid
+        var(--border);
+
+      border-radius:6px;
+
+      padding:
+        3px 7px;
+
+      background:
+        var(--bg);
+    }
+
+
+    .startcard input[type=text] {
+      width:100%;
+
+      padding:13px;
+
+      border-radius:10px;
+
+      border:
+        1px solid
+        var(--border);
+
+      font-size:1rem;
+
+      margin:
+        12px 0;
+
+      background:
+        var(--bg);
+    }
+
+
+    .checkrow {
+      display:flex;
+
+      align-items:flex-start;
+
+      gap:10px;
+
+      margin:
+        18px 0;
+    }
+
+
+    .checkrow input {
+      margin-top:4px;
+
+      width:18px;
+      height:18px;
+
+      flex-shrink:0;
+    }
+
+
+    .bigbtn {
+      width:100%;
+
+      padding:15px;
+
+      border-radius:12px;
+
+      border:none;
+
+      background:
+        var(--accent);
+
+      color:white;
+
+      font-size:1rem;
+
+      font-weight:600;
+
+      cursor:pointer;
+
+      margin-top:8px;
+    }
+
+
+    .bigbtn:hover:not(:disabled) {
+      background:
+        var(--accent-hover);
+    }
+
+
+    .bigbtn:disabled {
+      opacity:.4;
+      cursor:not-allowed;
+    }
+
+
+    .backbtn {
+      padding:12px;
+
+      border-radius:10px;
+
+      border:
+        1px solid
+        var(--border);
+
+      background:
+        transparent;
+
+      color:
+        var(--muted);
+
+      font-size:.86rem;
+
+      cursor:pointer;
+    }
+
+
+    .backbtn:disabled {
+      opacity:.35;
+      cursor:default;
+    }
+
+
+    .smallnote {
+      font-size:.8rem;
+
+      color:
+        var(--muted);
+
+      margin-top:14px;
+
+      line-height:1.5;
+    }
+
+
+    .hidden {
+      display:none !important;
+    }
+
+
+    .summary-row {
+      display:flex;
+
+      justify-content:
+        space-between;
+
+      padding:
+        9px 0;
+
+      border-bottom:
+        1px solid
+        var(--border);
+
+      font-size:.92rem;
+    }
+
+
+    .saving {
+      font-size:.8rem;
+
+      color:
+        var(--muted);
+
+      text-align:center;
+
+      margin-top:8px;
+
+      min-height:1.2em;
+    }
+
+
+    @media (min-width:760px) {
+
+      .wrap {
+        max-width:900px;
+      }
+
+
+      .rating-card {
+        flex-direction:row;
+
+        align-items:stretch;
+      }
+
+
+      .imgbox {
+        flex:1.15;
+
+        aspect-ratio:unset;
+
+        min-height:520px;
+      }
+
+
+      .question-panel {
+        flex:1;
+
+        justify-content:center;
+
+        padding:
+          0 4px;
+      }
+
+
+      .question {
+        text-align:left;
+
+        font-size:1.3rem;
+      }
+    }
+  </style>
+</head>
+
+
+<body>
+
+  <div class="topbar">
+
+    <div class="brand">
+
+      <span class="dot"></span>
+
+      MRI Readability Assessment
+
+    </div>
+
+    <div
+      class="meta"
+      id="topbarMeta">
+      &nbsp;
+    </div>
+
+  </div>
+
+
+  <div class="page">
+
+    <div class="wrap">
+
+
+      <!-- =========================================
+           CONSENT SCREEN
+      ========================================== -->
+
+      <div
+        class="card startcard"
+        id="consentScreen">
+
+        <h1>
+          MRI Image Readability Assessment
+        </h1>
+
+        <div class="sub">
+          Rater Information &amp; Consent
+        </div>
+
+
+        <h2>
+          Background
+        </h2>
+
+        <p>
+          MRI images can be affected by
+          image-quality degradation that may
+          reduce visual clarity and make
+          anatomical interpretation more
+          difficult.
+        </p>
+
+
+        <h2>
+          Purpose of this task
+        </h2>
+
+        <p>
+          You are being asked to provide your
+          independent clinical judgment on the
+          readability of a set of structural MRI
+          images.
+        </p>
+
+
+        <h2>
+          What you will be asked to do
+        </h2>
+
+        <ul>
+
+          <li>
+            You will view
+            <strong>
+              160 MRI images
+            </strong>,
+            one at a time.
+          </li>
+
+          <li>
+            For each image, rate its readability
+            using one of three categories.
+          </li>
+
+        </ul>
+
+
+        <ul>
+
+          <li>
+            <strong>
+              Readable
+            </strong>
+            &mdash;
+            anatomical structures can be
+            interpreted with adequate confidence.
+          </li>
+
+          <li>
+            <strong>
+              Borderline
+            </strong>
+            &mdash;
+            image quality is degraded, but the
+            main anatomical structures remain
+            interpretable with reduced confidence.
+          </li>
+
+          <li>
+            <strong>
+              Unreadable
+            </strong>
+            &mdash;
+            image degradation substantially
+            prevents reliable anatomical
+            interpretation.
+          </li>
+
+        </ul>
+
+
+        <p>
+          Please assess
+          <strong>
+            image readability only
+          </strong>.
+          You are not being asked to diagnose or
+          stage disease.
+        </p>
+
+
+        <h2>
+          Blinding
+        </h2>
+
+        <p>
+          The images are identified only by
+          anonymous image IDs. Information about
+          the source dataset, diagnostic class,
+          image-quality condition, and degradation
+          severity is not shown during rating.
+        </p>
+
+
+        <h2>
+          Data source and privacy
+        </h2>
+
+        <p>
+          The images are derived from publicly
+          available, de-identified research MRI
+          data. No patient names or protected
+          health information are displayed.
+        </p>
+
+
+        <h2>
+          Participation
+        </h2>
+
+        <p>
+          Participation is voluntary. Progress is
+          saved to the study response sheet after
+          every rating. If you leave and return
+          later, enter the same rater code to
+          continue from your first unrated image.
+        </p>
+
+
+        <div class="checkrow">
+
+          <input
+            type="checkbox"
+            id="consentCheck"
+            onchange="onConsentToggle()"
+          >
+
+          <label for="consentCheck">
+
+            I confirm that I have read and
+            understood the information above and
+            voluntarily agree to participate.
+
+          </label>
+
+        </div>
+
+
+        <input
+          type="text"
+          id="raterName"
+          placeholder="Enter your assigned rater code"
+          autocomplete="off"
+        >
+
+
+        <button
+          class="bigbtn"
+          id="beginBtn"
+          disabled
+          onclick="startRating()">
+
+          Begin / Resume
+
+        </button>
+
+      </div>
+
+
+      <!-- =========================================
+           RATING SCREEN
+      ========================================== -->
+
+      <div
+        class="hidden"
+        id="ratingScreen">
+
+
+        <div class="progress-row">
+
+          <span id="progressLabel">
+            Image 1 / 160
+          </span>
+
+          <span id="raterLabel"></span>
+
+        </div>
+
+
+        <div class="progress-bar">
+
+          <div
+            class="progress-fill"
+            id="progressFill"
+            style="width:0%">
+          </div>
+
+        </div>
+
+
+        <div
+          class="resume-box hidden"
+          id="resumeBox">
+        </div>
+
+
+        <div class="card rating-card">
+
+
+          <div class="imgbox">
+
+            <img
+              id="mainImg"
+              src=""
+              alt="Blinded MRI image"
+            >
+
+          </div>
+
+
+          <div class="question-panel">
+
+
+            <div class="question">
+
+              How readable is this image?
+
+            </div>
+
+
+            <div class="btnrow">
+
+
+              <button
+                class="ratebtn readable"
+                onclick="rate('Readable')">
+
+                Readable
+
+                <span class="key">
+                  1
+                </span>
+
+              </button>
+
+
+              <button
+                class="ratebtn borderline"
+                onclick="rate('Borderline')">
+
+                Borderline
+
+                <span class="key">
+                  2
+                </span>
+
+              </button>
+
+
+              <button
+                class="ratebtn unreadable"
+                onclick="rate('Unreadable')">
+
+                Unreadable
+
+                <span class="key">
+                  3
+                </span>
+
+              </button>
+
+
+            </div>
+
+
+            <button
+              class="backbtn"
+              id="backBtn"
+              onclick="goBack()"
+              style="margin-top:14px;">
+
+              &larr; Back to previous image
+
+            </button>
+
+
+            <div
+              class="saving"
+              id="savingLabel">
+
+              &nbsp;
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+        <div class="smallnote">
+
+          Keyboard shortcuts:
+          1 = Readable,
+          2 = Borderline,
+          3 = Unreadable,
+          Backspace = previous image.
+
+        </div>
+
+
+      </div>
+
+
+      <!-- =========================================
+           END SCREEN
+      ========================================== -->
+
+      <div
+        class="hidden card"
+        id="endScreen"
+        style="text-align:center;">
+
+
+        <h2>
+          Completed &mdash; thank you
+        </h2>
+
+
+        <p>
+          All 160 image ratings have been
+          completed.
+        </p>
+
+
+        <p class="smallnote">
+          Your responses have been saved.
+          You may now close this window.
+        </p>
+
+
+        <div id="summaryBox"></div>
+
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    let IMAGES = [];
+
+    let raterName = "";
+
+    let current = 0;
+
+    let ratings = {};
+
+    let manifestLoaded = false;
+
+    let isSaving = false;
+
+
+    // =============================================
+    // CONSENT / START
+    // =============================================
+
+    function onConsentToggle() {
+
+      const checked =
+        document
+          .getElementById(
+            "consentCheck"
+          )
+          .checked;
+
+      document
+        .getElementById(
+          "beginBtn"
+        )
+        .disabled =
+          !checked ||
+          !manifestLoaded;
+    }
+
+
+    function loadManifest() {
+
+      google.script.run
+
+        .withSuccessHandler(
+          (manifest) => {
+
+            IMAGES =
+              manifest || [];
+
+            manifestLoaded =
+              true;
+
+
+            if (
+              IMAGES.length !== 160
+            ) {
+
+              alert(
+                "The study is not ready. " +
+                "Expected 160 images but received " +
+                IMAGES.length +
+                ". Please contact the study administrator."
+              );
+
+              return;
+            }
+
+
+            onConsentToggle();
+
+          }
+        )
+
+
+        .withFailureHandler(
+          (err) => {
+
+            alert(
+              "Could not load the image list. " +
+              "Please refresh and try again.\n\n" +
+              (
+                err &&
+                err.message
+                  ? err.message
+                  : ""
+              )
+            );
+
+          }
+        )
+
+
+        .getManifestForClient();
+
+    }
+
+
+    function startRating() {
+
+      const nameInput =
+        document
+          .getElementById(
+            "raterName"
+          );
+
+
+      const name =
+        nameInput
+          .value
+          .trim();
+
+
+      if (!name) {
+
+        nameInput
+          .style
+          .borderColor =
+            "var(--red)";
+
+        return;
+      }
+
+
+      if (
+        !manifestLoaded ||
+        IMAGES.length !== 160
+      ) {
+
+        alert(
+          "The image list has not finished loading."
+        );
+
+        return;
+      }
+
+
+      raterName = name;
+
+
+      const beginBtn =
+        document
+          .getElementById(
+            "beginBtn"
+          );
+
+
+      beginBtn.disabled =
+        true;
+
+
+      beginBtn.textContent =
+        "Checking saved progress...";
+
+
+      google.script.run
+
+        .withSuccessHandler(
+          (progress) => {
+
+            ratings =
+              progress.ratings || {};
+
+
+            current =
+              Number(
+                progress.nextIndex || 0
+              );
+
+
+            google.script.run
+              .logConsent(
+                raterName
+              );
+
+
+            document
+              .getElementById(
+                "consentScreen"
+              )
+              .classList
+              .add(
+                "hidden"
+              );
+
+
+            document
+              .getElementById(
+                "raterLabel"
+              )
+              .textContent =
+                raterName;
+
+
+            document
+              .getElementById(
+                "topbarMeta"
+              )
+              .textContent =
+                raterName;
+
+
+            if (
+              current >=
+              IMAGES.length
+            ) {
+
+              finish();
+
+              return;
+            }
+
+
+            document
+              .getElementById(
+                "ratingScreen"
+              )
+              .classList
+              .remove(
+                "hidden"
+              );
+
+
+            const resumeBox =
+              document
+                .getElementById(
+                  "resumeBox"
+                );
+
+
+            if (
+              progress.completedCount > 0
+            ) {
+
+              resumeBox.textContent =
+                "Welcome back. " +
+                progress.completedCount +
+                " of 160 images are already completed. " +
+                "You will resume at image " +
+                (current + 1) +
+                ".";
+
+
+              resumeBox
+                .classList
+                .remove(
+                  "hidden"
+                );
+
+            } else {
+
+              resumeBox
+                .classList
+                .add(
+                  "hidden"
+                );
+
+            }
+
+
+            showCurrent();
+
+          }
+        )
+
+
+        .withFailureHandler(
+          (err) => {
+
+            beginBtn.disabled =
+              false;
+
+
+            beginBtn.textContent =
+              "Begin / Resume";
+
+
+            alert(
+              "Could not retrieve saved progress.\n\n" +
+              (
+                err &&
+                err.message
+                  ? err.message
+                  : ""
+              )
+            );
+
+          }
+        )
+
+
+        .getProgressForRater(
+          raterName
+        );
+
+    }
+
+
+    // =============================================
+    // DISPLAY
+    // =============================================
+
+    function setRatingButtonsDisabled(
+      disabled
+    ) {
+
+      document
+        .querySelectorAll(
+          ".ratebtn"
+        )
+        .forEach(
+          btn =>
+            btn.disabled =
+              disabled
+        );
+
+    }
+
+
+    function showCurrent() {
+
+      if (
+        current >=
+        IMAGES.length
+      ) {
+
+        finish();
+
+        return;
+      }
+
+
+      const img =
+        IMAGES[current];
+
+
+      document
+        .getElementById(
+          "progressLabel"
+        )
+        .textContent =
+          `Image ${current + 1} / ${IMAGES.length}`;
+
+
+      document
+        .getElementById(
+          "progressFill"
+        )
+        .style
+        .width =
+          `${(current / IMAGES.length) * 100}%`;
+
+
+      document
+        .getElementById(
+          "backBtn"
+        )
+        .disabled =
+          current === 0 ||
+          isSaving;
+
+
+      document
+        .getElementById(
+          "savingLabel"
+        )
+        .textContent =
+          " ";
+
+
+      if (img.src) {
+
+        document
+          .getElementById(
+            "mainImg"
+          )
+          .src =
+            img.src;
+
+
+        preloadNext();
+
+        return;
+      }
+
+
+      document
+        .getElementById(
+          "mainImg"
+        )
+        .src =
+          "";
+
+
+      document
+        .getElementById(
+          "savingLabel"
+        )
+        .textContent =
+          "Loading image...";
+
+
+      google.script.run
+
+        .withSuccessHandler(
+          (dataUrl) => {
+
+            img.src =
+              dataUrl;
+
+
+            if (
+              IMAGES[current] ===
+              img
+            ) {
+
+              document
+                .getElementById(
+                  "mainImg"
+                )
+                .src =
+                  dataUrl;
+
+
+              document
+                .getElementById(
+                  "savingLabel"
+                )
+                .textContent =
+                  " ";
+
+
+              preloadNext();
+
+            }
+
+          }
+        )
+
+
+        .withFailureHandler(
+          () => {
+
+            document
+              .getElementById(
+                "savingLabel"
+              )
+              .textContent =
+                "Image failed to load. Please refresh the page.";
+
+          }
+        )
+
+
+        .getImageBase64(
+          img.driveFileId
+        );
+
+    }
+
+
+    function preloadNext() {
+
+      const nextIndex =
+        current + 1;
+
+
+      if (
+        nextIndex >=
+        IMAGES.length
+      ) {
+
+        return;
+      }
+
+
+      const nextImg =
+        IMAGES[nextIndex];
+
+
+      if (
+        nextImg.src ||
+        nextImg.loading
+      ) {
+
+        return;
+      }
+
+
+      nextImg.loading =
+        true;
+
+
+      google.script.run
+
+        .withSuccessHandler(
+          (dataUrl) => {
+
+            nextImg.src =
+              dataUrl;
+
+
+            nextImg.loading =
+              false;
+
+          }
+        )
+
+
+        .withFailureHandler(
+          () => {
+
+            nextImg.loading =
+              false;
+
+          }
+        )
+
+
+        .getImageBase64(
+          nextImg.driveFileId
+        );
+
+    }
+
+
+    // =============================================
+    // RATING
+    // =============================================
+
+    function rate(value) {
+
+      if (
+        isSaving ||
+        current >= IMAGES.length
+      ) {
+
+        return;
+      }
+
+
+      const img =
+        IMAGES[current];
+
+
+      const record = {
+
+        rater:
+          raterName,
+
+        imageId:
+          img.id,
+
+        rating:
+          value,
+
+        orderShown:
+          current + 1
+
+      };
+
+
+      isSaving =
+        true;
+
+
+      setRatingButtonsDisabled(
+        true
+      );
+
+
+      document
+        .getElementById(
+          "backBtn"
+        )
+        .disabled =
+          true;
+
+
+      document
+        .getElementById(
+          "savingLabel"
+        )
+        .textContent =
+          "Saving...";
+
+
+      google.script.run
+
+        .withSuccessHandler(
+          () => {
+
+            ratings[
+              img.id
+            ] =
+              record;
+
+
+            current += 1;
+
+
+            isSaving =
+              false;
+
+
+            setRatingButtonsDisabled(
+              false
+            );
+
+
+            showCurrent();
+
+          }
+        )
+
+
+        .withFailureHandler(
+          () => {
+
+            isSaving =
+              false;
+
+
+            setRatingButtonsDisabled(
+              false
+            );
+
+
+            document
+              .getElementById(
+                "backBtn"
+              )
+              .disabled =
+                current === 0;
+
+
+            document
+              .getElementById(
+                "savingLabel"
+              )
+              .textContent =
+                "Save failed. Please choose the same rating again.";
+
+          }
+        )
+
+
+        .saveRating(
+          record
+        );
+
+    }
+
+
+    function goBack() {
+
+      if (
+        isSaving ||
+        current === 0
+      ) {
+
+        return;
+      }
+
+
+      current -= 1;
+
+
+      showCurrent();
+
+    }
+
+
+    // =============================================
+    // KEYBOARD SHORTCUTS
+    // =============================================
+
+    document
+      .addEventListener(
+        "keydown",
+        (e) => {
+
+          if (
+            document
+              .getElementById(
+                "ratingScreen"
+              )
+              .classList
+              .contains(
+                "hidden"
+              )
+          ) {
+
+            return;
+          }
+
+
+          if (isSaving) {
+
+            return;
+          }
+
+
+          if (
+            e.key === "1"
+          ) {
+
+            rate(
+              "Readable"
+            );
+
+          }
+
+
+          if (
+            e.key === "2"
+          ) {
+
+            rate(
+              "Borderline"
+            );
+
+          }
+
+
+          if (
+            e.key === "3"
+          ) {
+
+            rate(
+              "Unreadable"
+            );
+
+          }
+
+
+          if (
+            e.key ===
+            "Backspace"
+          ) {
+
+            e.preventDefault();
+
+            goBack();
+
+          }
+
+        }
+      );
+
+
+    // =============================================
+    // FINISH
+    // =============================================
+
+    function finish() {
+
+      document
+        .getElementById(
+          "ratingScreen"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+
+      document
+        .getElementById(
+          "consentScreen"
+        )
+        .classList
+        .add(
+          "hidden"
+        );
+
+
+      document
+        .getElementById(
+          "endScreen"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+
+      const counts = {
+
+        Readable: 0,
+
+        Borderline: 0,
+
+        Unreadable: 0
+
+      };
+
+
+      Object
+        .values(
+          ratings
+        )
+        .forEach(
+          r => {
+
+            if (
+              counts[
+                r.rating
+              ] !==
+              undefined
+            ) {
+
+              counts[
+                r.rating
+              ] += 1;
+
+            }
+
+          }
+        );
+
+
+      const box =
+        document
+          .getElementById(
+            "summaryBox"
+          );
+
+
+      box.innerHTML =
+        Object
+          .entries(
+            counts
+          )
+          .map(
+            ([key, value]) =>
+
+              `<div class="summary-row">
+                <span>${key}</span>
+                <span>${value}</span>
+              </div>`
+
+          )
+          .join("");
+
+    }
+
+
+    // =============================================
+    // PAGE LOAD
+    // =============================================
+
+    window
+      .addEventListener(
+        "load",
+        () => {
+
+          document
+            .getElementById(
+              "beginBtn"
+            )
+            .disabled =
+              true;
+
+
+          loadManifest();
+
+        }
+      );
+
+  </script>
+
+</body>
+
+</html>

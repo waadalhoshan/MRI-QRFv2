@@ -1,0 +1,150 @@
+project: MRI-QRF
+version: "1.0"
+
+seeds:
+  subject_split: 2026
+  corruption_global: 42
+  model_training: [13, 47, 101]
+  bootstrap: 2026
+
+classes:
+  - index: 0
+    name: Non-Demented
+    cdr: 0.0
+  - index: 1
+    name: Very Mild Dementia
+    cdr: 0.5
+  - index: 2
+    name: Mild Dementia
+    cdr: 1.0
+  - index: 3
+    name: Moderate Dementia
+    cdr: 2.0
+
+datasets:
+  OASIS_1:
+    selection: "MR1, mpr-1, CDR-labelled subjects"
+    subjects:
+      Non-Demented: 135
+      Very Mild Dementia: 70
+      Mild Dementia: 28
+      Moderate Dementia: 2
+    split_subjects:
+      train: 165
+      val: 34
+      test: 36
+    split_images_128:
+      train: 3300
+      val: 680
+      test: 720
+
+  OASIS_2:
+    selection: "last available MRI visit per subject, same-visit CDR, mpr-1"
+    subjects:
+      Non-Demented: 73
+      Very Mild Dementia: 53
+      Mild Dementia: 21
+      Moderate Dementia: 3
+    split_subjects:
+      train: 104
+      val: 23
+      test: 23
+    split_images_128:
+      train: 2080
+      val: 460
+      test: 460
+
+preprocessing:
+  canonical_orientation: true
+  robust_percentiles: [1, 99]
+  normalize_to: [0, 1]
+  restore_background_zero: true
+  slices_per_subject: 20
+  axial_depth_fraction: [0.30, 0.70]
+  canonical_resolution: [128, 128]
+  resize: bilinear
+  output: "8-bit grayscale PNG"
+
+distortions:
+  motion:
+    mild: {kspace_fraction: 0.10, max_displacement_px: 1}
+    moderate: {kspace_fraction: 0.20, max_displacement_px: 3}
+    severe: {kspace_fraction: 0.40, max_displacement_px: 6}
+  rician_noise:
+    mild: {sigma: 0.035}
+    moderate: {sigma: 0.075}
+    severe: {sigma: 0.15}
+  rotation:
+    mild: {degrees: 5}
+    moderate: {degrees: 10}
+    severe: {degrees: 15}
+  gaussian_blur:
+    mild: {sigma_px: 0.75, fwhm_approx_px: 1.8}
+    moderate: {sigma_px: 1.5, fwhm_approx_px: 3.5}
+    severe: {sigma_px: 2.5, fwhm_approx_px: 5.9}
+  brightness_contrast:
+    mild: {brightness_abs: 0.05, contrast_abs: 0.10}
+    moderate: {brightness_abs: 0.10, contrast_abs: 0.20}
+    severe: {brightness_abs: 0.15, contrast_abs: 0.30}
+
+models:
+  RandomForest:
+    n_estimators: 300
+    max_depth: 10
+    max_features: sqrt
+    class_weight: balanced_subsample
+  LinearSVM:
+    scaler: StandardScaler
+    C: 1.0
+    class_weight: balanced
+    max_iter: 1000
+  SimpleCNN:
+    channels: [32, 64, 128]
+    dropout: 0.30
+    optimizer: AdamW
+    learning_rate: 0.001
+    weight_decay: 0.0001
+  ResNet18:
+    pretrained: false
+    input_channels: 1
+    optimizer: SGD
+    learning_rate: 0.01
+    momentum: 0.9
+    weight_decay: 0.0001
+
+deep_learning:
+  batch_size: 32
+  max_epochs: 20
+  early_stopping_patience: 5
+  checkpoint_metric: validation_macro_f1
+  loss: weighted_cross_entropy
+  class_weight_formula: "sqrt(N/N_c), normalized to mean 1"
+
+classical_ml:
+  primary_resolution: 64
+  sensitivity_resolutions: [32, 64, 128]
+
+robustness:
+  ARR: "corrupted_accuracy / clean_accuracy * 100"
+  DRI: "mean ARR over 15 distortion-severity conditions"
+  CD_DRI: "mean of OASIS-1 and OASIS-2 DRI"
+
+statistics:
+  glmm: "correct ~ condition + (1|patient) + (1|training_seed)"
+  clean_reference: true
+  multiplicity: Holm
+  bootstrap_resamples: 2000
+  bootstrap_unit: patient
+
+reader_study:
+  total_images: 160
+  clean_images: 10
+  distorted_per_condition: 10
+  unique_source_slice_only: true
+  display_resolution: [512, 512]
+  ratings: [Readable, Borderline, Unreadable]
+  expected_readability:
+    clean: Readable
+    mild: Readable
+    moderate: Borderline
+    severe: Unreadable

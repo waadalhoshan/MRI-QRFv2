@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use MRI-QRF, please cite the associated paper and the OASIS datasets."
+title: "MRI Quality Robustness Framework (MRI-QRF)"
+type: software
+authors:
+  - family-names: "Alhoshan"
+    given-names: "Waad"
+repository-code: "https://github.com/waadalhoshan/MRI-QRF"
+license: MIT
+date-released: 2026-09-27
+keywords:
+  - MRI
+  - Alzheimer disease
+  - robustness
+  - image quality
+  - OASIS
