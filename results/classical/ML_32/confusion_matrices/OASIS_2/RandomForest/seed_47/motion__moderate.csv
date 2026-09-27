@@ -1,0 +1,5 @@
+true_class,Non-Demented,Very Mild Dementia,Mild Dementia,Moderate Dementia
+Non-Demented,128,42,50,0
+Very Mild Dementia,53,41,61,5
+Mild Dementia,5,6,44,5
+Moderate Dementia,5,4,10,1

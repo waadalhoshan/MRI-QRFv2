@@ -1,0 +1,11 @@
+{
+  "dataset": "OASIS_1",
+  "model": "ResNet18",
+  "seed": 101,
+  "best_epoch": 10,
+  "best_val_macro_f1": 0.32923134702539664,
+  "clean_accuracy_slice": 0.4736111111111111,
+  "DRI_slice": 94.97556207233627,
+  "clean_accuracy_subject": 0.4722222222222222,
+  "DRI_subject": 96.47058823529412
+}

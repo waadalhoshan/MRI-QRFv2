@@ -1,0 +1,11 @@
+{
+  "dataset": "OASIS_2",
+  "model": "SimpleCNN",
+  "seed": 47,
+  "best_epoch": 3,
+  "best_val_macro_f1": 0.284570757141808,
+  "clean_accuracy_slice": 0.4543478260869565,
+  "DRI_slice": 84.33811802232853,
+  "clean_accuracy_subject": 0.4782608695652174,
+  "DRI_subject": 84.84848484848484
+}

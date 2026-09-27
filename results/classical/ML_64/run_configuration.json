@@ -1,0 +1,45 @@
+{
+  "resolution": 64,
+  "seeds": [
+    13,
+    47,
+    101
+  ],
+  "class_names": [
+    "Non-Demented",
+    "Very Mild Dementia",
+    "Mild Dementia",
+    "Moderate Dementia"
+  ],
+  "models": [
+    "RandomForest",
+    "LinearSVM"
+  ],
+  "distortions": [
+    "motion",
+    "rician_noise",
+    "rotation",
+    "gaussian_blur",
+    "brightness_contrast"
+  ],
+  "severities": [
+    "mild",
+    "moderate",
+    "severe"
+  ],
+  "run_bootstrap": true,
+  "bootstrap_replicates": 2000,
+  "random_forest": {
+    "n_estimators": 300,
+    "max_depth": 10,
+    "max_features": "sqrt",
+    "class_weight": "balanced_subsample"
+  },
+  "linear_svm": {
+    "scaler": "StandardScaler",
+    "C": 1.0,
+    "class_weight": "balanced",
+    "max_iter": 1000
+  },
+  "training_protocol": "Train and validation use clean images only. All distortions are test-time only."
+}

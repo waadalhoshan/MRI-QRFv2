@@ -1,0 +1,22 @@
+{
+  "dataset": "OASIS_1",
+  "model": "ResNet18",
+  "seed": 47,
+  "batch_size": 32,
+  "max_epochs": 20,
+  "patience": 5,
+  "train_class_counts": [
+    1900,
+    980,
+    400,
+    20
+  ],
+  "class_weights": [
+    0.27935609221458435,
+    0.3889751732349396,
+    0.6088424921035767,
+    2.7228262424468994
+  ],
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "amp_dtype": "torch.bfloat16"
+}

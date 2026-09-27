@@ -1,0 +1,5 @@
+dataset,model,seed,split,condition,distortion,severity,class_index,class_name,precision,recall,f1,support
+OASIS_2,LinearSVM,101,test,rotation__mild,rotation,mild,0,Non-Demented,0.4620253164556962,0.33181818181818185,0.3862433862433862,220
+OASIS_2,LinearSVM,101,test,rotation__mild,rotation,mild,1,Very Mild Dementia,0.40425531914893614,0.35625,0.3787375415282392,160
+OASIS_2,LinearSVM,101,test,rotation__mild,rotation,mild,2,Mild Dementia,0.06289308176100629,0.16666666666666666,0.091324200913242,60
+OASIS_2,LinearSVM,101,test,rotation__mild,rotation,mild,3,Moderate Dementia,0.0,0.0,0.0,20

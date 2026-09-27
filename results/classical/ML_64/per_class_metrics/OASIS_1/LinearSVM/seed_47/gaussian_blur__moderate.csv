@@ -1,0 +1,5 @@
+dataset,model,seed,split,condition,distortion,severity,class_index,class_name,precision,recall,f1,support
+OASIS_1,LinearSVM,47,test,gaussian_blur__moderate,gaussian_blur,moderate,0,Non-Demented,0.6101364522417154,0.7825,0.6856516976998904,400
+OASIS_1,LinearSVM,47,test,gaussian_blur__moderate,gaussian_blur,moderate,1,Very Mild Dementia,0.2644628099173554,0.14545454545454545,0.187683284457478,220
+OASIS_1,LinearSVM,47,test,gaussian_blur__moderate,gaussian_blur,moderate,2,Mild Dementia,0.11764705882352941,0.125,0.12121212121212122,80
+OASIS_1,LinearSVM,47,test,gaussian_blur__moderate,gaussian_blur,moderate,3,Moderate Dementia,0.0,0.0,0.0,20

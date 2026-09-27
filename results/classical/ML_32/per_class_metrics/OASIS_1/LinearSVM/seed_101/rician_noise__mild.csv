@@ -1,0 +1,5 @@
+dataset,model,seed,split,condition,distortion,severity,class_index,class_name,precision,recall,f1,support
+OASIS_1,LinearSVM,101,test,rician_noise__mild,rician_noise,mild,0,Non-Demented,0.5536277602523659,0.8775,0.6789168278529981,400
+OASIS_1,LinearSVM,101,test,rician_noise__mild,rician_noise,mild,1,Very Mild Dementia,0.21428571428571427,0.04090909090909091,0.06870229007633588,220
+OASIS_1,LinearSVM,101,test,rician_noise__mild,rician_noise,mild,2,Mild Dementia,0.06818181818181818,0.0375,0.04838709677419355,80
+OASIS_1,LinearSVM,101,test,rician_noise__mild,rician_noise,mild,3,Moderate Dementia,0.0,0.0,0.0,20

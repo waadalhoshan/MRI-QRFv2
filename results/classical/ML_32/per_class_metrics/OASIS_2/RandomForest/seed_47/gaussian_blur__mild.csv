@@ -1,0 +1,5 @@
+dataset,model,seed,split,condition,distortion,severity,class_index,class_name,precision,recall,f1,support
+OASIS_2,RandomForest,47,test,gaussian_blur__mild,gaussian_blur,mild,0,Non-Demented,0.4431818181818182,0.5318181818181819,0.4834710743801653,220
+OASIS_2,RandomForest,47,test,gaussian_blur__mild,gaussian_blur,mild,1,Very Mild Dementia,0.34965034965034963,0.3125,0.33003300330033003,160
+OASIS_2,RandomForest,47,test,gaussian_blur__mild,gaussian_blur,mild,2,Mild Dementia,0.10204081632653061,0.08333333333333333,0.09174311926605505,60
+OASIS_2,RandomForest,47,test,gaussian_blur__mild,gaussian_blur,mild,3,Moderate Dementia,0.0,0.0,0.0,20

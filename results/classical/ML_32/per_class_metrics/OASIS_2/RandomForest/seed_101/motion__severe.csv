@@ -1,0 +1,5 @@
+dataset,model,seed,split,condition,distortion,severity,class_index,class_name,precision,recall,f1,support
+OASIS_2,RandomForest,101,test,motion__severe,motion,severe,0,Non-Demented,0.625,0.6136363636363636,0.6192660550458715,220
+OASIS_2,RandomForest,101,test,motion__severe,motion,severe,1,Very Mild Dementia,0.4270833333333333,0.25625,0.3203125,160
+OASIS_2,RandomForest,101,test,motion__severe,motion,severe,2,Mild Dementia,0.2605633802816901,0.6166666666666667,0.36633663366336633,60
+OASIS_2,RandomForest,101,test,motion__severe,motion,severe,3,Moderate Dementia,0.16666666666666666,0.05,0.07692307692307693,20

@@ -1,0 +1,5 @@
+dataset,model,seed,split,condition,distortion,severity,class_index,class_name,precision,recall,f1,support
+OASIS_2,RandomForest,13,test,rician_noise__mild,rician_noise,mild,0,Non-Demented,0.48247978436657685,0.8136363636363636,0.6057529610829103,220
+OASIS_2,RandomForest,13,test,rician_noise__mild,rician_noise,mild,1,Very Mild Dementia,0.24096385542168675,0.125,0.1646090534979424,160
+OASIS_2,RandomForest,13,test,rician_noise__mild,rician_noise,mild,2,Mild Dementia,0.16666666666666666,0.016666666666666666,0.030303030303030304,60
+OASIS_2,RandomForest,13,test,rician_noise__mild,rician_noise,mild,3,Moderate Dementia,0.0,0.0,0.0,20

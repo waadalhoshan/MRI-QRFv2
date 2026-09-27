@@ -1,0 +1,22 @@
+{
+  "dataset": "OASIS_2",
+  "model": "SimpleCNN",
+  "seed": 101,
+  "batch_size": 32,
+  "max_epochs": 20,
+  "patience": 5,
+  "train_class_counts": [
+    1020,
+    740,
+    300,
+    20
+  ],
+  "class_weights": [
+    0.3584428131580353,
+    0.4208275079727173,
+    0.6609358787536621,
+    2.559793710708618
+  ],
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "amp_dtype": "torch.bfloat16"
+}
