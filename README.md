@@ -327,4 +327,30 @@ Large model files (`*.pt`, `*.pth`, `*.joblib`) are configured for **Git LFS** i
 
 ## Citation
 
-See `CITATION.cff` and `references/oasis.bib`.
+Current Study:
+@article{oshan2026,
+  title={MRI-QRF: An Evidence-Based Framework for Evaluating the Robustness of Classification Models to MRI Quality Degradation in Alzheimer's Disease Classification},
+  author={Maryam Oshan, Masheal Alhomaidani and Waad Alhoshan},
+  year={2026}
+}
+
+OASIS Datasets
+@article{marcus2007open,
+  title={Open Access Series of Imaging Studies (OASIS): Cross-sectional MRI data in young, middle aged, nondemented, and demented older adults},
+  author={Marcus, Daniel S. and Wang, Tracy H. and Parker, Jamie and Csernansky, John G. and Morris, John C. and Buckner, Randy L.},
+  journal={Journal of Cognitive Neuroscience},
+  volume={19},
+  number={9},
+  pages={1498--1507},
+  year={2007}
+}
+
+@article{marcus2010open,
+  title={Open Access Series of Imaging Studies: Longitudinal MRI data in nondemented and demented older adults},
+  author={Marcus, Daniel S. and Fotenos, Anthony F. and Csernansky, John G. and Morris, John C. and Buckner, Randy L.},
+  journal={Journal of Cognitive Neuroscience},
+  volume={22},
+  number={12},
+  pages={2677--2684},
+  year={2010}
+}
