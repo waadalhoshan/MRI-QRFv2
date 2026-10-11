@@ -26,12 +26,6 @@ Research code and documentation accompanying **“MRI-QRF: An Evidence-Based Fra
 
 The SSIM levels and robustness categories are **heuristic engineering/reporting choices**, not clinical MRI-quality thresholds. OASIS-1 has only two Moderate Dementia subjects in the selected cohort; strong class-specific inference is unsupported.
 
-## What is and is not included
-
-**Included:** data preparation and split utilities, revised SSIM calibration code, calibrated test-distortion generator, 128×128 binary/multiclass classical evaluation, binary/multiclass DL training/evaluation scripts, prediction-merging utility, legacy scripts, documentation, and output directory placeholders.
-
-**Not included:** original or derived OASIS MRI images, trained checkpoints, the final generated `calibrated_parameters_FINAL.csv`, exact non-image study split manifests, or verified final GEE implementations/results. These omissions limit exact numerical replication. The DL runners create checkpoints *locally*; do not upload them here unless explicitly intended.
-
 ## Correct revised workflow
 
 1. Obtain OASIS data under its applicable access and redistribution terms. Refer to [data/README.md](data/README.md) and [docs/01_data_access.md](docs/01_data_access.md).
@@ -57,7 +51,7 @@ The reader study rates image readability rather than Alzheimer diagnosis or SSIM
 
 ## Model weights and data sharing
 
-Model weights are **not required to be committed to GitHub**. Retain local training code, configurations and numerical outputs; optionally deposit large weights in an external repository permitted by applicable licenses and link from [models/README.md](models/README.md). Do not redistribute raw/derived OASIS MRI images without permission or post unapproved participant/reader-level material.
+Model weights are **not required to be committed to GitHub**. Retain local training code, configurations and numerical outputs; optionally deposit large weights in an external repository permitted by applicable licenses. Do not redistribute raw/derived OASIS MRI images without permission or post unapproved participant/reader-level material.
 
 ## Other documentation
 
