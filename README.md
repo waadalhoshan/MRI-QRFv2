@@ -26,21 +26,6 @@ Research code and documentation accompanying **“MRI-QRF: An Evidence-Based Fra
 
 The SSIM levels and robustness categories are **heuristic engineering/reporting choices**, not clinical MRI-quality thresholds. OASIS-1 has only two Moderate Dementia subjects in the selected cohort; strong class-specific inference is unsupported.
 
-## Correct revised workflow
-
-1. Obtain OASIS data under its applicable access and redistribution terms. Refer to [data/README.md](data/README.md) and [docs/01_data_access.md](docs/01_data_access.md).
-2. Prepare subjects and 128×128 slices using `scripts/data_preparation/`. Retain the study's actual subject split manifests; regenerating assignments from a seed alone does not guarantee identical IDs. See [data/manifests/README.md](data/manifests/README.md).
-3. On **clean training images only**, run `scripts/distortions/calibrate_all_distortions.py` (Pass 2) and then `calibrate_all_distortions_pass3_targeted.py` (targeted Pass 3). Inspect the 30-condition `calibrated_parameters_FINAL.csv` and acceptance tolerances.
-4. Run `scripts/distortions/generate_calibrated_test_distortions.py` using that frozen CSV to create `distortions_128_calibrated` for held-out test images. Post-hoc test SSIM is verification, not parameter selection.
-5. For classical ML, `scripts/modeling/run_calibrated_ml_binary_128.py` and `run_calibrated_ml_multiclass_128.py` **evaluate previously trained local joblib models**; they do **not** train them. Use `merge_ml_subject_predictions.py` for combined prediction exports.
-6. For DL, `scripts/modeling/run_dl_binary_calibrated.py` and `run_dl_multiclass_calibrated.py` **train and evaluate** SimpleCNN/ResNet18 at three seeds, using clean train/validation data and calibrated held-out test conditions.
-7. Final manuscript inference requires **separate GEE and bootstrap code/results** beyond the included older GLMM scripts. See [docs/06_statistics.md](docs/06_statistics.md).
-8. The reader-study interface is described in [scripts/reader_study/google_apps_script/README.md](scripts/reader_study/google_apps_script/README.md).
-
-**Environment caveat:** The calibrated distortion/classical-ML scripts have local Windows `D:\\` path defaults; DL scripts use Linux `/workspace/` paths and assume CUDA. Adapt locations before running. No end-to-end run or result matching has been verified in this repository update.
-
-The older `scripts/distortions/generate_distortions.py` uses fixed corruption strengths and **must not be used for the revised calibrated test sets**. Similarly, `run_ml_models_mri_qrf.py`, `run_dl_models_mri_qrf.py` and GLMM scripts document earlier configurations; do not substitute them for the revised pipeline. Earlier 32×32/64×64 outputs are legacy/sensitivity configurations.
-
 ## Metrics and interpretation
 
 For a given dataset × task × model × condition, **ARR = 100 × (degraded accuracy / clean accuracy)**, provided the clean denominator is nonzero. In the revised manuscript, **DRI = mean ARR over the 15 distortion×severity conditions** within one dataset × task × model; it is **not** a per-family DRI. **CD-DRI = (DRI(OASIS-1) + DRI(OASIS-2))/2** for the corresponding task/model. Report clean accuracy alongside retention; ARR/DRI may exceed 100 without implying improved image quality.
