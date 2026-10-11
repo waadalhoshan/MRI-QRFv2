@@ -88,8 +88,6 @@ MRI-QRF-replication/
 │   ├── 08_results_and_models_upload.md
 │   ├── 09_reproduction_checklist.md
 │   └── model_cards/
-├── references/
-│   └── oasis.bib
 ├── requirements/
 ├── scripts/
 │   ├── data_preparation/
@@ -97,10 +95,7 @@ MRI-QRF-replication/
 │   ├── modeling/
 │   ├── statistics/
 │   ├── reporting/
-│   └── reader_study/
-├── data/                 # local-only MRI data; ignored by Git
-├── models/               # upload trained model artifacts here
-└── results/              # upload non-image result files here
+└── └── reader_study/
 ```
 
 ## End-to-end reproduction
