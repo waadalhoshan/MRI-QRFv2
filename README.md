@@ -355,3 +355,14 @@ The following revised research scripts are included in `main`:
 - `scripts/modeling/merge_ml_subject_predictions.py` — consolidates subject-level prediction tables.
 
 These scripts contain study-specific Windows `D:\\` paths; update them for your local environment. Model weights, OASIS images, and the generated frozen calibration CSV are **not** included. The earlier fixed-parameter distortion generator remains legacy code. End-to-end reproduction requires the original data and corresponding model checkpoints. See `docs/04_distortion_pipeline.md`.
+
+## Calibrated deep-learning experiments
+
+The final binary and multiclass PyTorch training/evaluation scripts are in `scripts/modeling/`:
+
+- `run_dl_binary_calibrated.py` — CDR=0 versus CDR>0 classification.
+- `run_dl_multiclass_calibrated.py` — four CDR-based classes.
+
+Both scripts run SimpleCNN and ResNet18 (initialized without pretrained weights) using clean training/validation images and the frozen calibrated test distortions in `distortions_128_calibrated`. They use 128×128 grayscale inputs, seeds 13/47/101, 20 maximum training epochs, and validation Macro-F1 checkpoint selection. They save local model checkpoints, slice- and subject-level predictions/metrics, and retention summaries; **large model files and OASIS images are not uploaded to this repository**.
+
+The uploaded scripts expect `/workspace/OASIS_1` and `/workspace/OASIS_2` and write under `/workspace/MRI_QRF/results/`; adjust those constants for your environment before running. A CUDA-capable GPU is required by their current implementation. Their Python syntax has been checked, but full training and evaluation have not been executed here.
