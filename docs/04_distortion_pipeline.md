@@ -29,3 +29,11 @@ Stochastic realizations are independently sampled per image with a reproducible 
 The committed `scripts/distortions/generate_distortions.py` **still implements an older fixed-parameter corruption schedule**, not the final training-set adaptive SSIM calibration. This is a **replication gap**, not an alternative description of the final experiment. The final calibrated parameter manifest and calibration/generation implementation have not yet been provided. Do not label the current generator's output as the final manuscript's held-out corrupted set.
 
 Expected test-condition image counts after correct calibration: OASIS-1 **720 × 15 = 10,800**; OASIS-2 **460 × 15 = 6,900**. No MRI source or derived images should be redistributed without permission.
+
+## Revised scripts now included
+
+- `scripts/distortions/calibrate_all_distortions.py`: initial training-only SSIM calibration (Pass 2).
+- `scripts/distortions/calibrate_all_distortions_pass3_targeted.py`: targeted refinement of six conditions, creating `calibrated_parameters_FINAL.csv`.
+- `scripts/distortions/generate_calibrated_test_distortions.py`: frozen-parameter test generation (SSIM 0.95/0.85/0.70).
+
+**Execution requirements:** The uploaded scripts contain local `D:\\` paths; adjust to the user's local clean-image directories before running. The generated calibration CSV is not committed; it must be generated from the licensed training data and verified to pass its ±0.02 tolerance checks. No imaging data or model weights are stored here. The legacy `generate_distortions.py` remains a distinct fixed-parameter implementation.
