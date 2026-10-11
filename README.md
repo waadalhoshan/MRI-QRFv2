@@ -1,368 +1,78 @@
-# MRI-QRF: MRI Quality Robustness Framework
+# MRI-QRF — MRI Quality Robustness Framework
 
-This repository is the replication package for the MRI Quality Robustness Framework (MRI-QRF), a controlled framework for measuring how Alzheimer’s disease (AD) MRI classifiers respond to image-quality degradation.
+Research code and documentation accompanying **“MRI-QRF: An Evidence-Based Framework for Evaluating the Robustness of Classification Models to MRI Quality Degradation in Alzheimer's Disease Classification”** (Oshan, Alhomaidani, and Alhoshan, 2026; manuscript).
 
-The study uses the official **OASIS-1 cross-sectional** and **OASIS-2 longitudinal** MRI datasets, both four-class and binary CDR classification tasks, two classical machine-learning models, two deep-learning models, five distortion types at three severities, three model-training seeds, and a blinded expert-readability study.
+**Scope:** OASIS-1 and OASIS-2, binary (CDR=0 vs CDR>0) and four-class (CDR 0/0.5/1/2) tasks; Random Forest, linear SVM, SimpleCNN and ResNet18; five simulated image distortions at three severity levels; training seeds 13, 47 and 101.
 
-> **Important data-use note:** Original or derived OASIS MRI images are **not redistributed** in this repository. Obtain OASIS data from the official OASIS project and comply with the applicable data-use agreement. This repository contains code, protocol definitions, documentation, result schemas, and upload locations for trained models and non-image results.
+> **Status:** This is a research-code replication package, **not a turnkey reproduction or clinically validated system**. MRI inputs, final calibration CSV, trained checkpoints and final GEE analysis scripts/results are not bundled. Some older scripts remain for historical comparison. Do not interpret the presence of a script as evidence that it reproduces a reported result without matching the corresponding study run.
 
-## Study at a glance
+## Protocol overview
 
-| Component | Fixed protocol |
+| Item | Revised study setting |
 |---|---|
-| Datasets | OASIS-1, OASIS-2 |
-| Tasks | Multiclass: CDR 0, 0.5, 1, 2; binary: CDR=0 vs CDR>0 |
-| CDR mapping | 0, 0.5, 1, 2 |
-| OASIS-1 selection | MR1, mpr-1, one MRI per subject |
-| OASIS-2 selection | last available MRI visit per subject, same-visit CDR, mpr-1 |
-| Split seed | 2026 |
-| Corruption seed | 42 |
-| Training seeds | 13, 47, 101 |
-| Classical ML | Random Forest; Linear SVM |
-| DL | SimpleCNN; ResNet18 trained from scratch |
-| DL input | 128×128 grayscale |
-| Main comparison resolution | 128×128 for all four models |
-| Legacy resolution sensitivity | 32×32 and 64×64 (not primary in revised manuscript) |
-| Distortions | Motion, Rician noise, rotation, Gaussian blur, brightness/contrast |
-| Severities | Mild, moderate, severe; SSIM calibration targets 0.95, 0.85, 0.70 |
-| Robustness metrics | ARR, DRI, CD-DRI |
-| Statistical unit | Subject/patient for inferential analysis |
-| Reader study | 160 blinded images; readability only |
-
-## Cohorts used in the study
-
-### OASIS-1
-- 235 labelled subjects:
-  - Non-Demented: 135
-  - Very Mild Dementia: 70
-  - Mild Dementia: 28
-  - Moderate Dementia: 2
-- Subject split:
-  - train: 165
-  - validation: 34
-  - test: 36
-- 20 axial slices per subject:
-  - train: 3,300 images
-  - validation: 680 images
-  - test: 720 images
-  - total: 4,700 images
-
-### OASIS-2
-- 150 subjects:
-  - Non-Demented: 73
-  - Very Mild Dementia: 53
-  - Mild Dementia: 21
-  - Moderate Dementia: 3
-- Subject split:
-  - train: 104
-  - validation: 23
-  - test: 23
-- 20 axial slices per subject:
-  - train: 2,080 images
-  - validation: 460 images
-  - test: 460 images
-  - total: 3,000 images
-
-The Moderate Dementia class is extremely small. Class-specific results for this class should be interpreted as exploratory.
-
-## Repository layout
-
-```text
-MRI-QRF-replication/
-├── README.md
-├── LICENSE
-├── CITATION.cff
-├── .gitignore
-├── .gitattributes
-├── config/
-│   ├── study_protocol.yaml
-│   └── paths.example.yaml
-├── docs/
-│   ├── 01_data_access.md
-│   ├── 02_cohort_and_splits.md
-│   ├── 03_preprocessing.md
-│   ├── 04_distortion_pipeline.md
-│   ├── 05_model_training.md
-│   ├── 06_statistics.md
-│   ├── 07_reader_study.md
-│   ├── 08_results_and_models_upload.md
-│   ├── 09_reproduction_checklist.md
-│   └── model_cards/
-├── requirements/
-├── scripts/
-│   ├── data_preparation/
-│   ├── distortions/
-│   ├── modeling/
-│   ├── statistics/
-│   ├── reporting/
-└── └── reader_study/
-```
-
-## End-to-end reproduction
-
-### 1. Obtain OASIS data
-See `docs/01_data_access.md`.
-
-Expected original metadata files:
-- OASIS-1 cross-sectional demographics spreadsheet
-- OASIS-2 longitudinal demographics spreadsheet
-
-Expected source image type:
-- Paired header/image T1 MRI volumes, including dataset-specific filename formats, read with nibabel.
-
-Do not commit the original OASIS data to GitHub.
+| Data | Official OASIS-1 and OASIS-2; one selected MRI observation per participant |
+| OASIS-1 labelled cohort | 235 subjects (165 train, 34 validation, 36 test) |
+| OASIS-2 labelled cohort | 150 subjects (104 train, 23 validation, 23 test) |
+| Slice processing | 20 axial slices/subject; 128×128 grayscale |
+| Tasks | Binary CDR=0 vs >0; four-class CDR=0, 0.5, 1, 2 |
+| Models | RandomForest, LinearSVM, SimpleCNN, ResNet18 |
+| Main comparison | 128×128 images (flattened for classical models); older 32/64 scripts are not main evaluation |
+| Distortion families | Motion, Rician noise, rotation, Gaussian blur, brightness/contrast |
+| SSIM engineering targets | Mild 0.95, moderate 0.85, severe 0.70 |
+| Calibration | Per dataset and distortion, on clean training subjects only; selected parameters frozen before test generation |
+| Seeds | Subject split 2026; corruption 42; models 13, 47, 101 |
+| Statistical analysis | Subject-clustered 2,000-resample bootstrap; seed-adjusted logistic GEE, planned Holm adjustments |
+| Reader study | 160 blinded images, two radiologists; readability, **not** diagnostic validity |
 
-### 2. Create the labelled cohorts
-Example:
+The SSIM levels and robustness categories are **heuristic engineering/reporting choices**, not clinical MRI-quality thresholds. OASIS-1 has only two Moderate Dementia subjects in the selected cohort; strong class-specific inference is unsupported.
 
-```bash
-python scripts/data_preparation/organize_oasis1.py \
-  --raw-root /path/to/OASIS1_raw \
-  --metadata /path/to/oasis_cross-sectional.xlsx \
-  --output-root /path/to/OASIS_1/organized \
-  --manifest /path/to/OASIS_1/organized/oasis1_manifest.csv
-```
+## What is and is not included
 
-```bash
-python scripts/data_preparation/organize_oasis2.py \
-  --raw-root /path/to/OASIS2_raw \
-  --metadata /path/to/oasis_longitudinal_demographics.xlsx \
-  --output-root /path/to/OASIS_2/organized \
-  --manifest /path/to/OASIS_2/organized/oasis2_manifest.csv
-```
+**Included:** data preparation and split utilities, revised SSIM calibration code, calibrated test-distortion generator, 128×128 binary/multiclass classical evaluation, binary/multiclass DL training/evaluation scripts, prediction-merging utility, legacy scripts, documentation, and output directory placeholders.
 
-### 3. Reproduce the subject split
+**Not included:** original or derived OASIS MRI images, trained checkpoints, the final generated `calibrated_parameters_FINAL.csv`, exact non-image study split manifests, or verified final GEE implementations/results. These omissions limit exact numerical replication. The DL runners create checkpoints *locally*; do not upload them here unless explicitly intended.
 
-For exact manuscript replication, place the final study split manifests in `data/manifests/` if available. Otherwise, the included deterministic split script reproduces the fixed class counts using seed 2026.
+## Correct revised workflow
 
-```bash
-python scripts/data_preparation/split_subjects.py \
-  --dataset OASIS_1 \
-  --manifest /path/to/OASIS_1/organized/oasis1_manifest.csv \
-  --split-root /path/to/OASIS_1/split \
-  --output-manifest /path/to/OASIS_1/organized/oasis1_subject_split.csv
-```
+1. Obtain OASIS data under its applicable access and redistribution terms. Refer to [data/README.md](data/README.md) and [docs/01_data_access.md](docs/01_data_access.md).
+2. Prepare subjects and 128×128 slices using `scripts/data_preparation/`. Retain the study's actual subject split manifests; regenerating assignments from a seed alone does not guarantee identical IDs. See [data/manifests/README.md](data/manifests/README.md).
+3. On **clean training images only**, run `scripts/distortions/calibrate_all_distortions.py` (Pass 2) and then `calibrate_all_distortions_pass3_targeted.py` (targeted Pass 3). Inspect the 30-condition `calibrated_parameters_FINAL.csv` and acceptance tolerances.
+4. Run `scripts/distortions/generate_calibrated_test_distortions.py` using that frozen CSV to create `distortions_128_calibrated` for held-out test images. Post-hoc test SSIM is verification, not parameter selection.
+5. For classical ML, `scripts/modeling/run_calibrated_ml_binary_128.py` and `run_calibrated_ml_multiclass_128.py` **evaluate previously trained local joblib models**; they do **not** train them. Use `merge_ml_subject_predictions.py` for combined prediction exports.
+6. For DL, `scripts/modeling/run_dl_binary_calibrated.py` and `run_dl_multiclass_calibrated.py` **train and evaluate** SimpleCNN/ResNet18 at three seeds, using clean train/validation data and calibrated held-out test conditions.
+7. Final manuscript inference requires **separate GEE and bootstrap code/results** beyond the included older GLMM scripts. See [docs/06_statistics.md](docs/06_statistics.md).
+8. The reader-study interface is described in [scripts/reader_study/google_apps_script/README.md](scripts/reader_study/google_apps_script/README.md).
 
-Repeat with `--dataset OASIS_2`.
+**Environment caveat:** The calibrated distortion/classical-ML scripts have local Windows `D:\\` path defaults; DL scripts use Linux `/workspace/` paths and assume CUDA. Adapt locations before running. No end-to-end run or result matching has been verified in this repository update.
 
-### 4. Preprocess to 128×128
+The older `scripts/distortions/generate_distortions.py` uses fixed corruption strengths and **must not be used for the revised calibrated test sets**. Similarly, `run_ml_models_mri_qrf.py`, `run_dl_models_mri_qrf.py` and GLMM scripts document earlier configurations; do not substitute them for the revised pipeline. Earlier 32×32/64×64 outputs are legacy/sensitivity configurations.
 
-```bash
-python scripts/data_preparation/preprocess_to_128.py \
-  --dataset OASIS_1 \
-  --split-root /path/to/OASIS_1/split \
-  --output-root /path/to/OASIS_1/clean_128 \
-  --manifest /path/to/OASIS_1/clean_128/oasis1_slice_manifest.csv
-```
+## Metrics and interpretation
 
-Repeat for OASIS-2.
+For a given dataset × task × model × condition, **ARR = 100 × (degraded accuracy / clean accuracy)**, provided the clean denominator is nonzero. In the revised manuscript, **DRI = mean ARR over the 15 distortion×severity conditions** within one dataset × task × model; it is **not** a per-family DRI. **CD-DRI = (DRI(OASIS-1) + DRI(OASIS-2))/2** for the corresponding task/model. Report clean accuracy alongside retention; ARR/DRI may exceed 100 without implying improved image quality.
 
-The exact preprocessing protocol is documented in `docs/03_preprocessing.md`.
+Interpretation bands (≥90 high, 75–<90 moderate, 60–<75 fragile, <60 low) are **heuristic only**, not clinically validated.
 
-### 5. Generate the 15 degraded test conditions (legacy script warning)
+The reader study rates image readability rather than Alzheimer diagnosis or SSIM threshold validity. Statistical analyses operate at subject level, not by treating slices as independent observations.
 
-**Important:** The command below runs the earlier fixed-parameter distortion generator. It does **not** implement the revised study's SSIM calibration on clean training images, with dataset-specific parameters frozen before held-out evaluation. To reproduce the revised paper, the calibrated generator and final parameter manifests are still required.
+## Model weights and data sharing
 
-```bash
-python scripts/distortions/generate_distortions.py \
-  --dataset OASIS_1 \
-  --clean-test-root /path/to/OASIS_1/clean_128/test \
-  --output-root /path/to/OASIS_1/distortions_128 \
-  --global-seed 42
-```
+Model weights are **not required to be committed to GitHub**. Retain local training code, configurations and numerical outputs; optionally deposit large weights in an external repository permitted by applicable licenses and link from [models/README.md](models/README.md). Do not redistribute raw/derived OASIS MRI images without permission or post unapproved participant/reader-level material.
 
-Repeat for OASIS-2.
+## Other documentation
 
-Expected distorted-image counts:
-- OASIS-1: 720 × 15 = 10,800
-- OASIS-2: 460 × 15 = 6,900
-
-### 6. Derive 64×64 and 32×32 copies
-
-The lower-resolution images are derived **after** the 128×128 distortion is generated. Distortions are not regenerated independently at lower resolutions.
-
-```bash
-python scripts/data_preparation/derive_resolutions.py \
-  --source /path/to/OASIS_1/clean_128 \
-  --output /path/to/OASIS_1/clean_64 \
-  --size 64
-```
-
-Run the same command for clean/distorted 64 and 32 copies for both datasets.
-
-### 7. Validate prepared data
-
-```bash
-python scripts/data_preparation/validate_prepared_data.py \
-  --oasis1-root /path/to/OASIS_1 \
-  --oasis2-root /path/to/OASIS_2
-```
-
-### 8. Train/evaluate classical ML
-
-The executed classical script is preserved as:
-
-```text
-scripts/modeling/run_ml_models_mri_qrf.py
-```
-
-It was run separately at 32, 64, and 128 by changing `RESOLUTION` and `OUTPUT_ROOT`. The revised main classical comparison is at **128×128** (16,384 features). Earlier 32×32 and 64×64 results are sensitivity or legacy runs.
-
-Models:
-- Random Forest: 300 trees, max depth 10, `max_features="sqrt"`, `class_weight="balanced_subsample"`
-- Linear SVM: StandardScaler + LinearSVC, C=1.0, class balanced, max_iter=1000
-
-### 9. Aggregate classical predictions to subject level
-
-```text
-scripts/modeling/subject_level_analysis_mri_qrf.py
-```
-
-Aggregation:
-- Random Forest: mean class probability across a subject’s 20 slices
-- Linear SVM: mean decision score across slices
-- final subject class: argmax of mean score
-
-### 10. Train/evaluate DL
-
-The executed RunPod script is:
-
-```text
-scripts/modeling/run_dl_models_mri_qrf.py
-```
-
-SimpleCNN:
-- 3 conv blocks: 32 → 64 → 128
-- batch norm, ReLU, max pooling
-- adaptive average pooling
-- dropout 0.30
-- AdamW, lr 1e-3, weight decay 1e-4
-
-ResNet18:
-- trained from scratch (`weights=None`)
-- single-channel first convolution
-- SGD, lr 0.01, momentum 0.9, weight decay 1e-4
-
-Both:
-- batch 32
-- max 20 epochs
-- early stopping patience 5
-- best checkpoint by clean validation Macro-F1
-- weighted CE: `sqrt(N/N_c)`, normalized to mean 1
-- seeds 13, 47, 101
-
-The observed best checkpoints occurred before the 20-epoch cap, so the study retained the 20-epoch protocol.
-
-### 11. Statistical analysis
-
-See `docs/06_statistics.md`.
-
-Included:
-- patient-clustered bootstrap for Δ Accuracy and Δ Macro-F1
-- final inference: subject-clustered, seed-adjusted logistic GEE models for each severity versus clean; Holm correction over three planned severity contrasts; ordered severity GEE; separate cross-dataset binary/multiclass GEE interaction models
-- **Code gap:** committed GLMM utilities are legacy and do not implement the revised final GEE workflow.
-
-### 12. Expert reader study
-
-See `docs/07_reader_study.md`.
-
-The repository includes:
-- selection/preparation script
-- Google Apps Script backend
-- HTML frontend
-- instructions for keeping the answer key private
-
-**Never commit `KEY_DO_NOT_SHARE/`.**
-
-## Robustness metrics
-
-### Accuracy Retention Rate
-
-```text
-ARR = corrupted accuracy / clean baseline accuracy × 100
-```
-
-ARR can exceed 100 if a model happens to classify the corrupted set more accurately than its own clean baseline.
-
-### Diagnostic Robustness Index
-
-```text
-DRI = mean ARR across the 15 distortion × severity conditions
-```
-
-**The revised manuscript defines DRI as mean ARR across all 15 distortion × severity conditions for a given dataset, task and model.** Distortion-specific ARR patterns are reported separately; this must not be confused with a per-family DRI definition. DRI can exceed 100, but this does not establish higher image quality or clinical benefit. Interpret together with clean performance.
-
-The proposed bands (≥90 Highly Robust; 75–<90 Moderately Robust; 60–<75 Fragile; <60 Low Robustness) are heuristic and **not clinically validated**.
-
-### Cross-Dataset Diagnostic Robustness Index
-
-```text
-CD-DRI = (DRI_OASIS-1 + DRI_OASIS-2) / 2
-```
-
-## Binary classification
-
-The complementary binary task relabels the same subjects as CDR=0 versus CDR>0, retaining the multiclass split. OASIS-1 negative/positive train: 95/70; validation: 20/14; test: 20/16. OASIS-2 train: 51/53; validation: 11/12; test: 11/12.
-
-## Uploading final models and results
-
-See `docs/08_results_and_models_upload.md`.
-
-Large model files (`*.pt`, `*.pth`, `*.joblib`) are configured for **Git LFS** in `.gitattributes`. Install Git LFS before committing model artifacts.
-
-## Reproducibility notes
-
-- Subject split seed: 2026
-- Corruption seed: 42
-- Model seeds: 13, 47, 101
-- No corrupted images enter training or validation.
-- Subject, not slice, is the independent statistical unit.
-- Raw per-sample predictions should be retained.
-- OASIS images are not redistributed.
-
+- [Modeling scripts](scripts/modeling/README.md)
+- [Distortion calibration](docs/04_distortion_pipeline.md)
+- [Inference methods and gaps](docs/06_statistics.md)
+- [Reader study methods](docs/07_reader_study.md)
+- [Result artifact guidance](docs/08_results_and_models_upload.md)
 
 ## Citation
 
-If you use MRI-QRF or its replication package in your research, please cite the following study:
+**Current manuscript:** Oshan, M., Alhomaidani, M., & Alhoshan, W. (2026). *MRI-QRF: An Evidence-Based Framework for Evaluating the Robustness of Classification Models to MRI Quality Degradation in Alzheimer's Disease Classification*. Manuscript (publication details pending).
 
-### Current Study
+**OASIS-1:** Marcus, D. S., Wang, T. H., Parker, J., Csernansky, J. G., Morris, J. C., & Buckner, R. L. (2007). Open Access Series of Imaging Studies (OASIS): Cross-sectional MRI data in young, middle aged, nondemented, and demented older adults. *Journal of Cognitive Neuroscience, 19*(9), 1498–1507. https://doi.org/10.1162/jocn.2007.19.9.1498
 
-Oshan, M., Alhomaidani, M., & Alhoshan, W. (2026). *MRI-QRF: An Evidence-Based Framework for Evaluating the Robustness of Classification Models to MRI Quality Degradation in Alzheimer's Disease Classification*. Manuscript.
+**OASIS-2:** Marcus, D. S., Fotenos, A. F., Csernansky, J. G., Morris, J. C., & Buckner, R. L. (2010). Open Access Series of Imaging Studies: Longitudinal MRI data in nondemented and demented older adults. *Journal of Cognitive Neuroscience, 22*(12), 2677–2684. https://doi.org/10.1162/jocn.2009.21407
 
-### OASIS Datasets
-
-The MRI datasets used in this study were obtained from the Open Access Series of Imaging Studies (OASIS). Please cite the original dataset publications:
-
-**OASIS-1 — Cross-sectional MRI Dataset**
-
-Marcus, D. S., Wang, T. H., Parker, J., Csernansky, J. G., Morris, J. C., & Buckner, R. L. (2007). Open Access Series of Imaging Studies (OASIS): Cross-sectional MRI data in young, middle aged, nondemented, and demented older adults. *Journal of Cognitive Neuroscience, 19*(9), 1498–1507. https://doi.org/10.1162/jocn.2007.19.9.1498
-
-**OASIS-2 — Longitudinal MRI Dataset**
-
-Marcus, D. S., Fotenos, A. F., Csernansky, J. G., Morris, J. C., & Buckner, R. L. (2010). Open Access Series of Imaging Studies: Longitudinal MRI data in nondemented and demented older adults. *Journal of Cognitive Neuroscience, 22*(12), 2677–2684. https://doi.org/10.1162/jocn.2009.21407
-
-**Official OASIS website:** https://www.oasis-brains.org/
-
-
-## Revised calibrated implementation (2026)
-
-The following revised research scripts are included in `main`:
-
-- `scripts/distortions/calibrate_all_distortions.py` — Pass 2 calibration on clean training images (SSIM targets 0.95 / 0.85 / 0.70).
-- `scripts/distortions/calibrate_all_distortions_pass3_targeted.py` — targeted refinement and frozen `calibrated_parameters_FINAL.csv` output.
-- `scripts/distortions/generate_calibrated_test_distortions.py` — applies frozen calibration to held-out test images.
-- `scripts/modeling/run_calibrated_ml_binary_128.py` and `run_calibrated_ml_multiclass_128.py` — 128×128 classical evaluation for both tasks.
-- `scripts/modeling/merge_ml_subject_predictions.py` — consolidates subject-level prediction tables.
-
-These scripts contain study-specific Windows `D:\\` paths; update them for your local environment. Model weights, OASIS images, and the generated frozen calibration CSV are **not** included. The earlier fixed-parameter distortion generator remains legacy code. End-to-end reproduction requires the original data and corresponding model checkpoints. See `docs/04_distortion_pipeline.md`.
-
-## Calibrated deep-learning experiments
-
-The final binary and multiclass PyTorch training/evaluation scripts are in `scripts/modeling/`:
-
-- `run_dl_binary_calibrated.py` — CDR=0 versus CDR>0 classification.
-- `run_dl_multiclass_calibrated.py` — four CDR-based classes.
-
-Both scripts run SimpleCNN and ResNet18 (initialized without pretrained weights) using clean training/validation images and the frozen calibrated test distortions in `distortions_128_calibrated`. They use 128×128 grayscale inputs, seeds 13/47/101, 20 maximum training epochs, and validation Macro-F1 checkpoint selection. They save local model checkpoints, slice- and subject-level predictions/metrics, and retention summaries; **large model files and OASIS images are not uploaded to this repository**.
-
-The uploaded scripts expect `/workspace/OASIS_1` and `/workspace/OASIS_2` and write under `/workspace/MRI_QRF/results/`; adjust those constants for your environment before running. A CUDA-capable GPU is required by their current implementation. Their Python syntax has been checked, but full training and evaluation have not been executed here.
+Dataset access: https://www.oasis-brains.org/
