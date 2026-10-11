@@ -78,7 +78,9 @@ Recommended files to preserve:
 - CD-DRI
 - across-seed mean/SD summaries
 - bootstrap CIs
-- mixed-model estimates and Holm-adjusted p-values
+- final logistic GEE estimates, Holm-adjusted p-values and cross-dataset interaction tests
+- separate legacy GLMM outputs, if retained, clearly labelled as older analyses
+- explicit Macro-F1 and class-specific degraded-condition results, where generated
 
 ## Do not upload
 - OASIS source images

@@ -26,7 +26,7 @@ Training seeds: **13, 47, 101**
 - 64×64: 4,096 features
 - 128×128: 16,384 features
 
-The main classical configuration is 64×64. The 32×32 and 128×128 results are retained as an input-resolution sensitivity analysis.
+The revised main classical configuration is **128×128**, with 16,384 flattened intensity features. Earlier 32×32 and 64×64 configurations are sensitivity or legacy variants, not the principal comparison.
 
 ### Subject-level aggregation
 Because the independent observational unit is the subject:

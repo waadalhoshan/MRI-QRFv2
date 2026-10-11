@@ -2,7 +2,7 @@
 
 This repository is the replication package for the MRI Quality Robustness Framework (MRI-QRF), a controlled framework for measuring how Alzheimer’s disease (AD) MRI classifiers respond to image-quality degradation.
 
-The study uses the official **OASIS-1 cross-sectional** and **OASIS-2 longitudinal** MRI datasets, four CDR-based classes, two classical machine-learning models, two deep-learning models, five distortion types at three severities, three model-training seeds, and a blinded expert-readability study.
+The study uses the official **OASIS-1 cross-sectional** and **OASIS-2 longitudinal** MRI datasets, both four-class and binary CDR classification tasks, two classical machine-learning models, two deep-learning models, five distortion types at three severities, three model-training seeds, and a blinded expert-readability study.
 
 > **Important data-use note:** Original or derived OASIS MRI images are **not redistributed** in this repository. Obtain OASIS data from the official OASIS project and comply with the applicable data-use agreement. This repository contains code, protocol definitions, documentation, result schemas, and upload locations for trained models and non-image results.
 
@@ -11,7 +11,7 @@ The study uses the official **OASIS-1 cross-sectional** and **OASIS-2 longitudin
 | Component | Fixed protocol |
 |---|---|
 | Datasets | OASIS-1, OASIS-2 |
-| Classes | Non-Demented; Very Mild Dementia; Mild Dementia; Moderate Dementia |
+| Tasks | Multiclass: CDR 0, 0.5, 1, 2; binary: CDR=0 vs CDR>0 |
 | CDR mapping | 0, 0.5, 1, 2 |
 | OASIS-1 selection | MR1, mpr-1, one MRI per subject |
 | OASIS-2 selection | last available MRI visit per subject, same-visit CDR, mpr-1 |
@@ -21,10 +21,10 @@ The study uses the official **OASIS-1 cross-sectional** and **OASIS-2 longitudin
 | Classical ML | Random Forest; Linear SVM |
 | DL | SimpleCNN; ResNet18 trained from scratch |
 | DL input | 128×128 grayscale |
-| Classical sensitivity | 32×32, 64×64, 128×128 |
-| Main classical resolution | 64×64 |
+| Main comparison resolution | 128×128 for all four models |
+| Legacy resolution sensitivity | 32×32 and 64×64 (not primary in revised manuscript) |
 | Distortions | Motion, Rician noise, rotation, Gaussian blur, brightness/contrast |
-| Severities | Mild, moderate, severe |
+| Severities | Mild, moderate, severe; SSIM calibration targets 0.95, 0.85, 0.70 |
 | Robustness metrics | ARR, DRI, CD-DRI |
 | Statistical unit | Subject/patient for inferential analysis |
 | Reader study | 160 blinded images; readability only |
@@ -113,7 +113,7 @@ Expected original metadata files:
 - OASIS-2 longitudinal demographics spreadsheet
 
 Expected source image type:
-- OASIS Analyze-format T1 MRI (`.hdr` + `.img`)
+- Paired header/image T1 MRI volumes, including dataset-specific filename formats, read with nibabel.
 
 Do not commit the original OASIS data to GitHub.
 
@@ -164,7 +164,9 @@ Repeat for OASIS-2.
 
 The exact preprocessing protocol is documented in `docs/03_preprocessing.md`.
 
-### 5. Generate the 15 degraded test conditions
+### 5. Generate the 15 degraded test conditions (legacy script warning)
+
+**Important:** The command below runs the earlier fixed-parameter distortion generator. It does **not** implement the revised study's SSIM calibration on clean training images, with dataset-specific parameters frozen before held-out evaluation. To reproduce the revised paper, the calibrated generator and final parameter manifests are still required.
 
 ```bash
 python scripts/distortions/generate_distortions.py \
@@ -209,7 +211,7 @@ The executed classical script is preserved as:
 scripts/modeling/run_ml_models_mri_qrf.py
 ```
 
-It was run separately at 32, 64, and 128 by changing `RESOLUTION` and `OUTPUT_ROOT`. The main classical configuration is 64×64; 32×32 and 128×128 are the resolution-sensitivity analysis.
+It was run separately at 32, 64, and 128 by changing `RESOLUTION` and `OUTPUT_ROOT`. The revised main classical comparison is at **128×128** (16,384 features). Earlier 32×32 and 64×64 results are sensitivity or legacy runs.
 
 Models:
 - Random Forest: 300 trees, max depth 10, `max_features="sqrt"`, `class_weight="balanced_subsample"`
@@ -262,10 +264,8 @@ See `docs/06_statistics.md`.
 
 Included:
 - patient-clustered bootstrap for Δ Accuracy and Δ Macro-F1
-- logistic mixed-effects analysis in R:
-  `correct ~ condition + (1|patient) + (1|training_seed)`
-- clean condition as reference
-- Holm correction across 15 clean-vs-corrupted contrasts
+- final inference: subject-clustered, seed-adjusted logistic GEE models for each severity versus clean; Holm correction over three planned severity contrasts; ordered severity GEE; separate cross-dataset binary/multiclass GEE interaction models
+- **Code gap:** committed GLMM utilities are legacy and do not implement the revised final GEE workflow.
 
 ### 12. Expert reader study
 
@@ -289,19 +289,25 @@ ARR = corrupted accuracy / clean baseline accuracy × 100
 
 ARR can exceed 100 if a model happens to classify the corrupted set more accurately than its own clean baseline.
 
-### Dataset Robustness Index
+### Diagnostic Robustness Index
 
 ```text
 DRI = mean ARR across the 15 distortion × severity conditions
 ```
 
-DRI may also exceed 100. This does **not** mean the degraded images have higher image quality or clinical value.
+**The revised manuscript defines DRI as mean ARR across all 15 distortion × severity conditions for a given dataset, task and model.** Distortion-specific ARR patterns are reported separately; this must not be confused with a per-family DRI definition. DRI can exceed 100, but this does not establish higher image quality or clinical benefit. Interpret together with clean performance.
+
+The proposed bands (≥90 Highly Robust; 75–<90 Moderately Robust; 60–<75 Fragile; <60 Low Robustness) are heuristic and **not clinically validated**.
 
 ### Cross-Dataset Diagnostic Robustness Index
 
 ```text
 CD-DRI = (DRI_OASIS-1 + DRI_OASIS-2) / 2
 ```
+
+## Binary classification
+
+The complementary binary task relabels the same subjects as CDR=0 versus CDR>0, retaining the multiclass split. OASIS-1 negative/positive train: 95/70; validation: 20/14; test: 20/16. OASIS-2 train: 51/53; validation: 11/12; test: 11/12.
 
 ## Uploading final models and results
 

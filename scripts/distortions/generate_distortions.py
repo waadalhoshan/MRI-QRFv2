@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generate MRI-QRF test-only distortions at canonical 128x128 resolution."""
+"""LEGACY fixed-parameter MRI-QRF test distortion generator.
+
+WARNING: This script does NOT implement the revised manuscript's dataset-specific
+SSIM calibration on clean training subjects. Its outputs must not be described as
+the final revised experiment's calibrated held-out corruption conditions.
+See docs/04_distortion_pipeline.md for the manuscript protocol.
+"""
 
 from __future__ import annotations
 import argparse, hashlib

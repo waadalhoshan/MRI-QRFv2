@@ -1,5 +1,5 @@
 project: MRI-QRF
-version: "1.0"
+version: "2.0-documentation"
 
 seeds:
   subject_split: 2026
@@ -20,6 +20,17 @@ classes:
   - index: 3
     name: Moderate Dementia
     cdr: 2.0
+
+binary_task:
+  negative: 'CDR=0'
+  positive: 'CDR>0 (0.5, 1, 2)'
+  reuse_multiclass_subject_splits: true
+  OASIS_1:
+    negative: {train: 95, val: 20, test: 20}
+    positive: {train: 70, val: 14, test: 16}
+  OASIS_2:
+    negative: {train: 51, val: 11, test: 11}
+    positive: {train: 53, val: 12, test: 12}
 
 datasets:
   OASIS_1:
@@ -56,6 +67,8 @@ datasets:
 
 preprocessing:
   canonical_orientation: true
+  native_shape: [256, 256, 128]
+  native_voxel_spacing_mm: [1.0, 1.0, 1.25]
   robust_percentiles: [1, 99]
   normalize_to: [0, 1]
   restore_background_zero: true
@@ -66,26 +79,14 @@ preprocessing:
   output: "8-bit grayscale PNG"
 
 distortions:
-  motion:
-    mild: {kspace_fraction: 0.10, max_displacement_px: 1}
-    moderate: {kspace_fraction: 0.20, max_displacement_px: 3}
-    severe: {kspace_fraction: 0.40, max_displacement_px: 6}
-  rician_noise:
-    mild: {sigma: 0.035}
-    moderate: {sigma: 0.075}
-    severe: {sigma: 0.15}
-  rotation:
-    mild: {degrees: 5}
-    moderate: {degrees: 10}
-    severe: {degrees: 15}
-  gaussian_blur:
-    mild: {sigma_px: 0.75, fwhm_approx_px: 1.8}
-    moderate: {sigma_px: 1.5, fwhm_approx_px: 3.5}
-    severe: {sigma_px: 2.5, fwhm_approx_px: 5.9}
-  brightness_contrast:
-    mild: {brightness_abs: 0.05, contrast_abs: 0.10}
-    moderate: {brightness_abs: 0.10, contrast_abs: 0.20}
-    severe: {brightness_abs: 0.15, contrast_abs: 0.30}
+  final_protocol: "dataset-specific calibration on clean training subjects"
+  target_ssim: {mild: 0.95, moderate: 0.85, severe: 0.70}
+  selection: "parameter with closest median subject-level SSIM"
+  frozen_before_held_out_testing: true
+  calibrated_parameter_manifest: "not yet supplied in repository"
+  distortion_families: [motion, rician_noise, rotation, gaussian_blur, brightness_contrast]
+  legacy_fixed_parameter_generator: "scripts/distortions/generate_distortions.py"
+  warning: "legacy generator DOES NOT reproduce final calibrated protocol"
 
 models:
   RandomForest:
@@ -121,20 +122,23 @@ deep_learning:
   class_weight_formula: "sqrt(N/N_c), normalized to mean 1"
 
 classical_ml:
-  primary_resolution: 64
-  sensitivity_resolutions: [32, 64, 128]
+  primary_resolution: 128
+  legacy_sensitivity_resolutions: [32, 64]
 
 robustness:
   ARR: "corrupted_accuracy / clean_accuracy * 100"
-  DRI: "mean ARR over 15 distortion-severity conditions"
+  DRI: "mean ARR across all 15 distortion-severity conditions per dataset/task/model"
+  interpretation: "heuristic only: >=90 high; 75 to <90 moderate; 60 to <75 fragile; <60 low"
   CD_DRI: "mean of OASIS-1 and OASIS-2 DRI"
 
 statistics:
-  glmm: "correct ~ condition + (1|patient) + (1|training_seed)"
-  clean_reference: true
-  multiplicity: Holm
+  independent_unit: subject
   bootstrap_resamples: 2000
-  bootstrap_unit: patient
+  bootstrap: "subject-clustered mean delta accuracy and 95 percent CI per distortion"
+  severity_comparisons: "subject-clustered logistic GEE, seed adjusted, Holm over 3 severities vs clean"
+  severity_trend: "ordered predictor GEE, Holm within distortion family"
+  cross_dataset: "separate binary and multiclass GEE interaction tests"
+  legacy_glmm_scripts_are_not_final: true
 
 reader_study:
   total_images: 160
@@ -143,8 +147,6 @@ reader_study:
   unique_source_slice_only: true
   display_resolution: [512, 512]
   ratings: [Readable, Borderline, Unreadable]
-  expected_readability:
-    clean: Readable
-    mild: Readable
-    moderate: Borderline
-    severe: Unreadable
+  initial_weighted_kappa: 0.420
+  weighted_kappa_after_algorithmic_reconciliation: 0.674
+  note: "readability only; thresholds are not clinically validated"

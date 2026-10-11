@@ -22,8 +22,9 @@ Copy the complete `DL_128` output tree, including:
 ## Statistics
 Place:
 - bootstrap confidence intervals
-- GLMM fixed effects
-- clean-vs-corrupted contrasts with Holm-adjusted p-values
+- final subject-clustered logistic GEE estimates, severity-level contrasts and Holm-adjusted p-values
+- ordered severity trends and cross-dataset interaction models
+- legacy GLMM estimates only when clearly labelled as an earlier analysis
 - model summaries/warnings
 
 ## Reader study
