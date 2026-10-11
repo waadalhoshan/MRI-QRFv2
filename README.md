@@ -328,3 +328,7 @@ Large model files (`*.pt`, `*.pth`, `*.joblib`) are configured for **Git LFS** i
 ## Citation
 
 See `CITATION.cff` and `references/oasis.bib`.
+
+## Revised calibration and classical evaluation scripts
+
+The repository includes newly supplied training-only SSIM calibration (Pass 2 and targeted Pass 3), frozen-parameter test distortion generation, 128×128 binary/multiclass classical ML evaluation, and merging of subject-level predictions under `scripts/distortions/` and `scripts/modeling/`. The scripts use SSIM targets **0.95 / 0.85 / 0.70**, consistent with the revised manuscript. Run them with local OASIS data and existing trained model files; their Windows `D:\\` paths must be edited locally. The final `calibrated_parameters_FINAL.csv` is an output of calibration, not bundled here. The source scripts have been checked for Python syntax only; end-to-end execution requires the local data and models.
