@@ -1,49 +1,23 @@
-# 6. Statistical analysis
+# 6. Statistical inference — final manuscript protocol
 
-## Independent unit
+The independent observational unit is the **subject**, not the MRI slice. Analyses account for subject-level repeated observations and training seed. Two-sided testing uses an adjusted significance threshold of p < 0.05.
 
-The **subject/patient** is the independent observational unit. Slice-level predictions are preserved for reproducibility and subject aggregation, but slices are not treated as independent patients.
+## Bootstrap uncertainty
 
-## Mixed-effects logistic model
+For each distortion family, average the distorted-minus-clean **accuracy change** across mild, moderate, and severe conditions, and estimate a 95% confidence interval using **2,000 subject-clustered bootstrap resamples**, retaining the pairing between clean and distorted observations.
 
-For each model/dataset analysis, correctness is modeled as:
+## Severity contrasts
 
-```text
-correct ~ condition + (1 | patient) + (1 | training_seed)
-```
+Fit logistic **generalized estimating equations (GEE)** to subject-level correct/incorrect classification, cluster by subject, and adjust for training seed. Obtain three contrasts against clean: mild, moderate, and severe. Apply **Holm correction across the three planned severity contrasts** within each dataset × task × model combination.
 
-- response: correct / incorrect
-- clean condition: reference
-- patient: random intercept
-- training seed: random intercept
-- 15 corrupted conditions contrasted against clean
-- Holm correction across the 15 contrasts
+## Severity trend
 
-The repository provides:
-- `prepare_glmm_input.py`
-- `mixed_effects_logistic.R`
+Exclude clean images and fit a subject-clustered, seed-adjusted logistic GEE with mild → moderate → severe as an ordered predictor. Apply a conservative Holm adjustment across trend comparisons within each distortion family. Non-monotonic responses must be reported rather than forced into a monotonic interpretation.
 
-The R implementation uses `lme4` and `emmeans`.
+## Cross-dataset analysis
 
-Because there are only three training-seed levels, the seed random effect may be weakly estimated; warnings/singular fits should be retained and reported rather than suppressed.
+For binary and multiclass classification **separately**, fit subject-level logistic GEE using degraded observations, adjusting for severity and seed and clustering by subject. Examine Dataset×Distortion, Model×Distortion, and Dataset×Distortion×Model interactions. CD-DRI is a **descriptive average of dataset-specific DRI**, not itself the unit of inferential testing.
 
-## Patient-clustered bootstrap
+## Source-code status
 
-The repository provides `patient_cluster_bootstrap.py`.
-
-For each bootstrap replicate:
-1. subjects are resampled with replacement;
-2. all observations for a selected subject are retained;
-3. clean and corrupted conditions remain paired;
-4. metric changes are calculated within each training seed;
-5. seed-specific changes are averaged within the bootstrap replicate.
-
-Outputs:
-- Δ Accuracy from clean
-- 95% CI
-- Δ Macro-F1 from clean
-- 95% CI
-
-Number of bootstrap resamples: **2000**
-
-The Moderate Dementia class is too small for strong class-specific inferential claims.
+The committed `scripts/statistics/mixed_effects_logistic.R` and `prepare_glmm_input.py` describe an **earlier mixed-effects logistic regression** with 15-condition Holm correction. They are **not implementations of the final GEE protocol**. The final revised GEE scripts, actual analysis inputs, and verified outputs are needed before claiming complete computational replication.
