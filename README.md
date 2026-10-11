@@ -325,32 +325,26 @@ Large model files (`*.pt`, `*.pth`, `*.joblib`) are configured for **Git LFS** i
 - Raw per-sample predictions should be retained.
 - OASIS images are not redistributed.
 
+
 ## Citation
 
-Current Study:
-@article{oshan2026,
-  title={MRI-QRF: An Evidence-Based Framework for Evaluating the Robustness of Classification Models to MRI Quality Degradation in Alzheimer's Disease Classification},
-  author={Maryam Oshan, Masheal Alhomaidani and Waad Alhoshan},
-  year={2026}
-}
+If you use MRI-QRF or its replication package in your research, please cite the following study:
 
-OASIS Datasets
-@article{marcus2007open,
-  title={Open Access Series of Imaging Studies (OASIS): Cross-sectional MRI data in young, middle aged, nondemented, and demented older adults},
-  author={Marcus, Daniel S. and Wang, Tracy H. and Parker, Jamie and Csernansky, John G. and Morris, John C. and Buckner, Randy L.},
-  journal={Journal of Cognitive Neuroscience},
-  volume={19},
-  number={9},
-  pages={1498--1507},
-  year={2007}
-}
+### Current Study
 
-@article{marcus2010open,
-  title={Open Access Series of Imaging Studies: Longitudinal MRI data in nondemented and demented older adults},
-  author={Marcus, Daniel S. and Fotenos, Anthony F. and Csernansky, John G. and Morris, John C. and Buckner, Randy L.},
-  journal={Journal of Cognitive Neuroscience},
-  volume={22},
-  number={12},
-  pages={2677--2684},
-  year={2010}
-}
+Oshan, M., Alhomaidani, M., & Alhoshan, W. (2026). *MRI-QRF: An Evidence-Based Framework for Evaluating the Robustness of Classification Models to MRI Quality Degradation in Alzheimer's Disease Classification*. Manuscript.
+
+### OASIS Datasets
+
+The MRI datasets used in this study were obtained from the Open Access Series of Imaging Studies (OASIS). Please cite the original dataset publications:
+
+**OASIS-1 — Cross-sectional MRI Dataset**
+
+Marcus, D. S., Wang, T. H., Parker, J., Csernansky, J. G., Morris, J. C., & Buckner, R. L. (2007). Open Access Series of Imaging Studies (OASIS): Cross-sectional MRI data in young, middle aged, nondemented, and demented older adults. *Journal of Cognitive Neuroscience, 19*(9), 1498–1507. https://doi.org/10.1162/jocn.2007.19.9.1498
+
+**OASIS-2 — Longitudinal MRI Dataset**
+
+Marcus, D. S., Fotenos, A. F., Csernansky, J. G., Morris, J. C., & Buckner, R. L. (2010). Open Access Series of Imaging Studies: Longitudinal MRI data in nondemented and demented older adults. *Journal of Cognitive Neuroscience, 22*(12), 2677–2684. https://doi.org/10.1162/jocn.2009.21407
+
+**Official OASIS website:** https://www.oasis-brains.org/
+
