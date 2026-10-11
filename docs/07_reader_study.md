@@ -56,11 +56,11 @@ This is **expected_readability**, not ground truth.
 - progress bar
 - cross-device resume using the same rater code
 
-## Analysis
-Recommended reporting:
-- rating distributions by severity/distortion
-- quadratic-weighted Cohen's κ between readers
-- concordance with expected readability
-- descriptive human-vs-model comparison
+## Final reported agreement and scope
 
-Do not describe the reader study as validation of AD diagnostic accuracy.
+- Original (pre-reconciliation) quadratic-weighted Cohen's κ: **0.420**.
+- **Original exact agreement: 53.1%**; **same-or-adjacent-category agreement: 84.4%**. These are different statistics and must not be interchanged.
+- After **algorithmic reconciliation of Borderline disagreements**, weighted κ was **0.674**; this was **not** a second independent reader assessment.
+- Readability effects vary by corruption family and do not uniformly follow the engineering mild/moderate/severe labels.
+
+The study evaluates readability, **not** Alzheimer diagnosis, clinically established MRI acceptability, or validation of the SSIM targets or DRI tiers.
