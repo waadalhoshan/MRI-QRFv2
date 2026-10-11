@@ -343,3 +343,15 @@ Marcus, D. S., Fotenos, A. F., Csernansky, J. G., Morris, J. C., & Buckner, R. L
 
 **Official OASIS website:** https://www.oasis-brains.org/
 
+
+## Revised calibrated implementation (2026)
+
+The following revised research scripts are included in `main`:
+
+- `scripts/distortions/calibrate_all_distortions.py` — Pass 2 calibration on clean training images (SSIM targets 0.95 / 0.85 / 0.70).
+- `scripts/distortions/calibrate_all_distortions_pass3_targeted.py` — targeted refinement and frozen `calibrated_parameters_FINAL.csv` output.
+- `scripts/distortions/generate_calibrated_test_distortions.py` — applies frozen calibration to held-out test images.
+- `scripts/modeling/run_calibrated_ml_binary_128.py` and `run_calibrated_ml_multiclass_128.py` — 128×128 classical evaluation for both tasks.
+- `scripts/modeling/merge_ml_subject_predictions.py` — consolidates subject-level prediction tables.
+
+These scripts contain study-specific Windows `D:\\` paths; update them for your local environment. Model weights, OASIS images, and the generated frozen calibration CSV are **not** included. The earlier fixed-parameter distortion generator remains legacy code. End-to-end reproduction requires the original data and corresponding model checkpoints. See `docs/04_distortion_pipeline.md`.
