@@ -1,60 +1,31 @@
-# 4. Distortion pipeline
+# 4. Distortion pipeline — final manuscript protocol
 
-Distortions are applied **only to held-out test images**. Training and validation remain clean.
+The revised MRI-QRF main study uses **five distortion families × three severities** at a canonical **128×128** resolution. Models are trained and validated only on clean images; synthetic distortions are introduced at held-out test time.
 
-There are 5 distortion types × 3 severities = **15 degraded test conditions**.
+## Dataset-adaptive severity calibration
 
-Global corruption seed: **42**.
+For each dataset, distortion family, and severity level, candidate strengths are evaluated **on clean training subjects only**. For each candidate, SSIM is calculated between the clean and degraded counterpart of each training slice, averaged within subjects, and summarized as the median across subjects. The candidate whose median subject-level SSIM is nearest the target is selected and **frozen before any test evaluation**.
 
-A deterministic image-condition seed is derived from:
-- global seed
-- dataset name
-- relative image path
-- distortion name
-- severity
+| Severity | Engineering SSIM target |
+|---|---:|
+| Mild | 0.95 |
+| Moderate | 0.85 |
+| Severe | 0.70 |
 
-This makes every corrupted image reproducible independently of processing order.
+The selected numerical parameters may differ across OASIS-1 and OASIS-2. Classifier predictions and accuracy **are never used to choose** corruption strength. These SSIM targets are engineering conventions, **not clinically validated severity thresholds**.
 
-## Parameters
+| Family | Calibrated quantity |
+|---|---|
+| Motion | Fraction of k-space lines affected; maximum displacement |
+| Rician noise | Noise standard deviation |
+| Rotation | In-plane rotation magnitude |
+| Gaussian blur | Gaussian standard deviation |
+| Brightness/contrast | Brightness offset and contrast scaling |
 
-| Distortion | Mild | Moderate | Severe |
-|---|---|---|---|
-| Motion | 10% k-space lines; displacement ≤1 px | 20%; ≤3 px | 40%; ≤6 px |
-| Rician noise | σ=0.035 | σ=0.075 | σ=0.15 |
-| Rotation | ±5° | ±10° | ±15° |
-| Gaussian blur | σ=0.75 px | σ=1.5 px | σ=2.5 px |
-| Brightness/contrast | ±5% / ±10% | ±10% / ±20% | ±15% / ±30% |
+Stochastic realizations are independently sampled per image with a reproducible seed derived from global seed **42**, image identity, and condition. Noise fields, motion line/displacement selection, rotation sign, and brightness/contrast direction can vary per image even though their calibrated strength is fixed for the condition. Gaussian blur is deterministic.
 
-Approximate Gaussian-blur FWHM:
-- mild: 1.8 px
-- moderate: 3.5 px
-- severe: 5.9 px
+## Current implementation limitation
 
-## Motion implementation
+The committed `scripts/distortions/generate_distortions.py` **still implements an older fixed-parameter corruption schedule**, not the final training-set adaptive SSIM calibration. This is a **replication gap**, not an alternative description of the final experiment. The final calibrated parameter manifest and calibration/generation implementation have not yet been provided. Do not label the current generator's output as the final manuscript's held-out corrupted set.
 
-The motion operator works in 2D Fourier space. A severity-dependent subset of phase-encoding lines is selected. Selected lines receive Fourier phase shifts generated from random integer translations within the severity-specific maximum displacement. The inverse transform produces the corrupted magnitude image.
-
-This is a controlled simulation, not a full physical model of all patient-motion trajectories.
-
-## Rician noise
-
-For normalized image `x`:
-
-```text
-sqrt((x + n1)^2 + n2^2)
-```
-
-where `n1` and `n2` are independent Gaussian noise fields with the severity-specific σ.
-
-## Rotation
-
-The magnitude is fixed by severity. The sign is chosen deterministically from ±1 using the image-specific RNG.
-
-## Brightness / contrast
-
-Contrast is adjusted around middle gray (0.5), followed by an additive brightness change. Signs are selected deterministically from ±1. Output is clipped to `[0,1]`.
-
-## Expected counts
-
-- OASIS-1: 720 test images × 15 = **10,800**
-- OASIS-2: 460 × 15 = **6,900**
+Expected test-condition image counts after correct calibration: OASIS-1 **720 × 15 = 10,800**; OASIS-2 **460 × 15 = 6,900**. No MRI source or derived images should be redistributed without permission.
