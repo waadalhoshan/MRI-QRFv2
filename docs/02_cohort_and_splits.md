@@ -35,6 +35,17 @@ Final cohort: **150 subjects**
 | Moderate Dementia | 3 | 1 | 1 | 1 |
 | **Total** | **150** | **104** | **23** | **23** |
 
+## Complementary binary classification
+
+The binary task reuses the **same subject-level partitions** and labels CDR=0 as negative and CDR>0 (0.5, 1, or 2) as positive.
+
+| Dataset | Binary group | Train | Validation | Test |
+|---|---|---:|---:|---:|
+| OASIS-1 | CDR=0 | 95 | 20 | 20 |
+| OASIS-1 | CDR>0 | 70 | 14 | 16 |
+| OASIS-2 | CDR=0 | 51 | 11 | 11 |
+| OASIS-2 | CDR>0 | 53 | 12 | 12 |
+
 ## Leakage prevention
 
 The split is performed at the **subject level before slice extraction**. All 20 slices from one subject remain in one split.
